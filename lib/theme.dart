@@ -27,6 +27,7 @@ ThemeData get theme {
         primary: Colors.deepPurple,
         elevation: 0,
         enableFeedback: true,
+        shadowColor: Colors.transparent,
       ),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
