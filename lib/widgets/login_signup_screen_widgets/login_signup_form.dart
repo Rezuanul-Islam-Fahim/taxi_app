@@ -1,52 +1,32 @@
 import 'package:flutter/material.dart';
 
-class LoginForm extends StatelessWidget {
+import 'text_field.dart';
+import 'form_button.dart';
+import '../../models/auth_mode.dart';
+
+class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  AuthMode authMode = AuthMode.login;
 
   @override
   Widget build(BuildContext context) {
     return Form(
       child: Column(
         children: <Widget>[
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Email',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              prefixIcon: const Icon(Icons.email),
-              filled: true,
-              fillColor: Colors.grey[100],
-            ),
-          ),
           const SizedBox(height: 15),
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Password',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-              prefixIcon: const Icon(Icons.email),
-              filled: true,
-              fillColor: Colors.grey[100],
-            ),
-          ),
+          const InputTextField(title: 'Email'),
           const SizedBox(height: 15),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Login Now'),
-              onPressed: () {},
-            ),
-          ),
+          const InputTextField(title: 'Password'),
+          const SizedBox(height: 15),
+          const FormButton(title: 'Login'),
+          const SizedBox(height: 15),
+          const FormButton(title: 'Create An Account'),
         ],
       ),
     );
