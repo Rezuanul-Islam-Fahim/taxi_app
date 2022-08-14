@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
+import 'screens/login_signup_screen.dart';
 
 import 'theme.dart';
 
@@ -16,10 +16,10 @@ class TaxiApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Taxi App',
       theme: theme,
-      initialRoute: LoginScreen.route,
+      initialRoute: LoginSignupScreen.route,
       routes: {
         HomeScreen.route: (_) => const HomeScreen(),
-        LoginScreen.route: (_) => const LoginScreen(),
+        LoginSignupScreen.route: (_) => const LoginSignupScreen(),
       },
     );
   }

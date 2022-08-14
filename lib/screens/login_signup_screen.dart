@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/login_screen_widgets/login_form.dart';
+import '../widgets/login_signup_screen_widgets/login_signup_form.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginSignupScreen extends StatelessWidget {
+  const LoginSignupScreen({Key? key}) : super(key: key);
 
-  static const String route = '/login';
+  static const String route = '/login-signup';
 
   @override
   Widget build(BuildContext context) {
