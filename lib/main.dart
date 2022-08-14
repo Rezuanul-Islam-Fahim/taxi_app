@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 
+import 'theme.dart';
+
 void main() => runApp(const TaxiApp());
 
 class TaxiApp extends StatelessWidget {
@@ -13,6 +15,7 @@ class TaxiApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Taxi App',
+      theme: theme,
       initialRoute: LoginScreen.route,
       routes: {
         HomeScreen.route: (_) => const HomeScreen(),
