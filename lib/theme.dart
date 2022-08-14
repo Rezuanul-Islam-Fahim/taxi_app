@@ -22,6 +22,13 @@ ThemeData get theme {
             fontWeight: FontWeight.w800,
           ),
         ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        primary: Colors.deepPurple,
+        elevation: 0,
+        enableFeedback: true,
+      ),
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 }

@@ -34,9 +34,18 @@ class LoginForm extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
-          ElevatedButton(
-            child: const Text('Login Now'),
-            onPressed: () {},
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text('Login Now'),
+              onPressed: () {},
+            ),
           ),
         ],
       ),
