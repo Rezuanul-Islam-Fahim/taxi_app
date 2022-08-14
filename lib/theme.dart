@@ -16,6 +16,12 @@ ThemeData get theme {
             fontSize: 15,
             color: Colors.black87,
           ),
+          headline1: const TextStyle(
+            fontSize: 45,
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+          ),
         ),
+    visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 }
