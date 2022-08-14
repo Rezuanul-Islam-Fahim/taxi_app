@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() => runApp(const TaxiApp());
 
@@ -9,10 +10,14 @@ class TaxiApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Taxi App',
-      home: HomeScreen(),
+      initialRoute: LoginScreen.route,
+      routes: {
+        HomeScreen.route: (_) => const HomeScreen(),
+        LoginScreen.route: (_) => const LoginScreen(),
+      },
     );
   }
 }
