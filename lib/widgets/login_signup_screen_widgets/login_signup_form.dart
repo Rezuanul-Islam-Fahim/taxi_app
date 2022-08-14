@@ -11,13 +11,33 @@ class LoginForm extends StatefulWidget {
   State<LoginForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
-  AuthMode authMode = AuthMode.login;
+class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMixin {
+  late AuthMode authMode;
+  late AnimationController _animationController;
+  late Animation<double> _sizetransition;
 
   void switchMode() {
-    setState(() {
-      authMode = authMode == AuthMode.login ? AuthMode.signup : AuthMode.login;
-    });
+    if (authMode == AuthMode.login) {
+      setState(() => authMode = AuthMode.signup);
+      _animationController.forward();
+    } else {
+      setState(() => authMode = AuthMode.login);
+      _animationController.reverse();
+    }
+  }
+
+  @override
+  void initState() {
+    authMode = AuthMode.login;
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _sizetransition = CurvedAnimation(
+      curve: Curves.easeIn,
+      parent: _animationController,
+    );
+    super.initState();
   }
 
   @override
@@ -30,13 +50,15 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 15),
           const InputTextField(title: 'Password'),
           const SizedBox(height: 15),
-          if (authMode == AuthMode.signup)
-            Column(
+          SizeTransition(
+            sizeFactor: _sizetransition,
+            child: Column(
               children: [
                 const InputTextField(title: 'Confirm Password'),
                 const SizedBox(height: 15),
               ],
             ),
+          ),
           FormButton(
             title: authMode == AuthMode.login ? 'Login' : 'Sign Up',
             handler: () {},
