@@ -14,6 +14,12 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   AuthMode authMode = AuthMode.login;
 
+  void switchMode() {
+    setState(() {
+      authMode = authMode == AuthMode.login ? AuthMode.signup : AuthMode.login;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -24,9 +30,22 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 15),
           const InputTextField(title: 'Password'),
           const SizedBox(height: 15),
-          const FormButton(title: 'Login'),
+          if (authMode == AuthMode.signup)
+            Column(
+              children: [
+                const InputTextField(title: 'Confirm Password'),
+                const SizedBox(height: 15),
+              ],
+            ),
+          FormButton(
+            title: authMode == AuthMode.login ? 'Login' : 'Sign Up',
+            handler: () {},
+          ),
           const SizedBox(height: 15),
-          const FormButton(title: 'Create An Account'),
+          FormButton(
+            title: authMode == AuthMode.login ? 'Create An Account' : 'Already have an account?',
+            handler: switchMode,
+          ),
         ],
       ),
     );

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FormButton extends StatelessWidget {
-  const FormButton({Key? key, required this.title}) : super(key: key);
+  const FormButton({
+    Key? key,
+    required this.title,
+    required this.handler,
+  }) : super(key: key);
 
   final String title;
+  final VoidCallback handler;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +21,8 @@ class FormButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
+        onPressed: handler,
         child: Text(title),
-        onPressed: () {},
       ),
     );
   }
