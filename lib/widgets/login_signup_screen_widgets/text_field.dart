@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class InputTextField extends StatelessWidget {
-  const InputTextField({Key? key, required this.title}) : super(key: key);
+  const InputTextField({
+    Key? key,
+    required this.title,
+    this.handler,
+  }) : super(key: key);
 
   final String title;
+  final String? Function(String? value)? handler;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +23,7 @@ class InputTextField extends StatelessWidget {
         filled: true,
         fillColor: Colors.grey[100],
       ),
+      onSaved: handler,
     );
   }
 }

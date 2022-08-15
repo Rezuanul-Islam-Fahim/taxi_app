@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../screens/home_screen.dart';
+import '../../services/auth_services.dart';
 import 'text_field.dart';
 import 'form_button.dart';
 import '../../models/auth_mode.dart';
@@ -12,17 +14,48 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMixin {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthServices _auth = AuthServices();
   late AuthMode authMode;
   late AnimationController _animationController;
   late Animation<double> _sizetransition;
+  late String _userName;
+  late String _email;
+  late String _password;
 
-  void switchMode() {
+  void _switchMode() {
     if (authMode == AuthMode.login) {
       setState(() => authMode = AuthMode.signup);
       _animationController.forward();
     } else {
       setState(() => authMode = AuthMode.login);
       _animationController.reverse();
+    }
+  }
+
+  Future<void> _authenticate(BuildContext context) async {
+    bool isAuthenticated;
+
+    _formKey.currentState!.save();
+
+    if (authMode == AuthMode.login) {
+      isAuthenticated = await _auth.login(
+        email: _email,
+        password: _password,
+      );
+    } else {
+      isAuthenticated = await _auth.createAccount(
+        userName: _userName,
+        email: _email,
+        password: _password,
+      );
+    }
+
+    if (!mounted) return;
+    if (isAuthenticated) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (BuildContext context) => const HomeScreen(),
+      ));
     }
   }
 
@@ -43,38 +76,39 @@ class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Column(
         children: <Widget>[
           SizeTransition(
             sizeFactor: _sizetransition,
             child: Column(
               children: [
-                const InputTextField(title: 'Username'),
+                InputTextField(
+                  title: 'Username',
+                  handler: (String? value) => _userName = value!,
+                ),
                 const SizedBox(height: 15),
               ],
             ),
           ),
-          const InputTextField(title: 'Email'),
-          const SizedBox(height: 15),
-          const InputTextField(title: 'Password'),
-          const SizedBox(height: 15),
-          SizeTransition(
-            sizeFactor: _sizetransition,
-            child: Column(
-              children: [
-                const InputTextField(title: 'Confirm Password'),
-                const SizedBox(height: 15),
-              ],
-            ),
+          InputTextField(
+            title: 'Email',
+            handler: (String? value) => _email = value!,
           ),
+          const SizedBox(height: 15),
+          InputTextField(
+            title: 'Password',
+            handler: (String? value) => _password = value!,
+          ),
+          const SizedBox(height: 15),
           FormButton(
             title: authMode == AuthMode.login ? 'Login' : 'Sign Up',
-            handler: () {},
+            handler: () => _authenticate(context),
           ),
           const SizedBox(height: 15),
           FormButton(
             title: authMode == AuthMode.login ? 'Create An Account' : 'Already have an account?',
-            handler: switchMode,
+            handler: _switchMode,
           ),
         ],
       ),

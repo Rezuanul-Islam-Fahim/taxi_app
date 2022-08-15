@@ -9,6 +9,11 @@ class AuthServices {
   final DatabaseService _db = DatabaseService();
 
   Future<bool> login({String? email, String? password}) async {
+    if (kDebugMode) {
+      print(email);
+      print(password);
+    }
+
     try {
       await _auth.signInWithEmailAndPassword(
         email: email!,
@@ -35,16 +40,12 @@ class AuthServices {
       print(email);
       print(password);
     }
+
     try {
-      print('=====================');
       UserCredential userData = await _auth.createUserWithEmailAndPassword(
         email: email!,
         password: password!,
       );
-      print('=====================');
-      if (kDebugMode) {
-        print(userData.user!.uid);
-      }
       await _db.storeUser(
         user.User(
           id: userData.user!.uid,
