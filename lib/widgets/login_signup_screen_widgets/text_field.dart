@@ -4,11 +4,15 @@ class InputTextField extends StatelessWidget {
   const InputTextField({
     Key? key,
     required this.title,
+    required this.icon,
+    this.password = false,
     this.handler,
   }) : super(key: key);
 
   final String title;
   final String? Function(String? value)? handler;
+  final IconData? icon;
+  final bool? password;
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +23,11 @@ class InputTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        prefixIcon: const Icon(Icons.email),
+        prefixIcon: Icon(icon!),
         filled: true,
         fillColor: Colors.grey[100],
       ),
+      obscureText: password! ? true : false,
       onSaved: handler,
     );
   }

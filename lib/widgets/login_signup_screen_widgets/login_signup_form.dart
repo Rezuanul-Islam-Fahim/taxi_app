@@ -86,6 +86,7 @@ class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMix
                 InputTextField(
                   title: 'Username',
                   handler: (String? value) => _userName = value!,
+                  icon: Icons.account_circle,
                 ),
                 const SizedBox(height: 15),
               ],
@@ -94,11 +95,14 @@ class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMix
           InputTextField(
             title: 'Email',
             handler: (String? value) => _email = value!,
+            icon: Icons.email,
           ),
           const SizedBox(height: 15),
           InputTextField(
             title: 'Password',
             handler: (String? value) => _password = value!,
+            icon: Icons.key,
+            password: true,
           ),
           const SizedBox(height: 15),
           FormButton(
