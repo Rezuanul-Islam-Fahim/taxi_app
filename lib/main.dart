@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_signup_screen.dart';
 
+import 'screens/onboarding_screen.dart';
 import 'theme.dart';
 
 Future<void> main() async {
@@ -21,8 +22,9 @@ class TaxiApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Taxi App',
       theme: theme,
-      initialRoute: LoginSignupScreen.route,
+      initialRoute: OnboardingScreen.route,
       routes: {
+        OnboardingScreen.route: (_) => const OnboardingScreen(),
         HomeScreen.route: (_) => const HomeScreen(),
         LoginSignupScreen.route: (_) => const LoginSignupScreen(),
       },
