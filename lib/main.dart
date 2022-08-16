@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'providers/map_provider.dart';
 import 'screens/map_screen.dart';
 import 'screens/login_signup_screen.dart';
 
@@ -18,16 +20,19 @@ class TaxiApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Taxi App',
-      theme: theme,
-      initialRoute: OnboardingScreen.route,
-      routes: {
-        OnboardingScreen.route: (_) => const OnboardingScreen(),
-        HomeScreen.route: (_) => const HomeScreen(),
-        LoginSignupScreen.route: (_) => const LoginSignupScreen(),
-      },
+    return ChangeNotifierProvider.value(
+      value: MapProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Taxi App',
+        theme: theme,
+        initialRoute: OnboardingScreen.route,
+        routes: {
+          OnboardingScreen.route: (_) => const OnboardingScreen(),
+          HomeScreen.route: (_) => const HomeScreen(),
+          LoginSignupScreen.route: (_) => const LoginSignupScreen(),
+        },
+      ),
     );
   }
 }
