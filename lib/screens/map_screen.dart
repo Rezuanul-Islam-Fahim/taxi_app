@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:taxi_app/models/map_action.dart';
 import 'package:taxi_app/providers/map_provider.dart';
 
 class MapScreen extends StatelessWidget {
@@ -18,82 +19,28 @@ class MapScreen extends StatelessWidget {
               children: [
                 GoogleMap(
                   onMapCreated: mapProvider.onMapCreated,
-                  initialCameraPosition: mapProvider.cameraPos,
+                  initialCameraPosition: mapProvider.cameraPos!,
                   compassEnabled: true,
                   onTap: mapProvider.onTap,
                   onCameraMove: mapProvider.onCameraMove,
-                  markers: mapProvider.markers,
+                  markers: mapProvider.markers!,
                   padding: const EdgeInsets.only(bottom: 90),
                 ),
-                // DraggableScrollableSheet(
-                //   initialChildSize: .2,
-                //   minChildSize: .1,
-                //   maxChildSize: .6,
-                //   builder: (BuildContext context, ScrollController scrollController) {
-                //     return Container(
-                //       color: Colors.red,
-                //       child: ListView(
-                //         controller: scrollController,
-                //         children: [
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //           SizedBox(height: 10),
-                //           Container(
-                //             color: Colors.yellow,
-                //             height: 20,
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   },
-                // ),
+                Visibility(
+                  visible: mapProvider.mapAction == MapAction.confirmTrip && mapProvider.hasDestinationMarker!,
+                  child: Positioned(
+                    bottom: 15,
+                    left: 15,
+                    right: 15,
+                    child: Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           );

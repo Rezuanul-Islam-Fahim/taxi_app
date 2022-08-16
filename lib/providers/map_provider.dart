@@ -1,18 +1,23 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:uuid/uuid.dart';
+import 'package:taxi_app/models/map_action.dart';
+// import 'package:uuid/uuid.dart';
 
 class MapProvider with ChangeNotifier {
-  late GoogleMapController _controller;
-  late CameraPosition _cameraPos;
-  late Set<Marker> _markers;
+  late GoogleMapController? _controller;
+  late CameraPosition? _cameraPos;
+  late Set<Marker>? _markers;
+  late MapAction? _mapAction;
+  bool? _hasDestinationMarker = false;
 
-  CameraPosition get cameraPos => _cameraPos;
-  GoogleMapController get controller => _controller;
-  Set<Marker> get markers => _markers;
+  CameraPosition? get cameraPos => _cameraPos;
+  GoogleMapController? get controller => _controller;
+  Set<Marker>? get markers => _markers;
+  bool? get hasDestinationMarker => _hasDestinationMarker!;
+  MapAction? get mapAction => _mapAction;
 
   MapProvider() {
+    _mapAction = MapAction.selectTrip;
     _markers = {};
     setCameraPosition(const LatLng(37.42227936982647, -122.08611108362673));
   }
@@ -37,29 +42,37 @@ class MapProvider with ChangeNotifier {
   }
 
   void addMarker(LatLng latLng) {
-    final String markerId = const Uuid().v4();
-
-    markers.clear();
-    markers.add(
-      Marker(
-        markerId: MarkerId(markerId),
-        position: latLng,
-        infoWindow: InfoWindow(
-          title: 'Remove',
-          onTap: () {
-            markers.removeWhere((Marker marker) => marker.markerId.value == markerId);
-            notifyListeners();
-          },
-        ),
-        zIndex: 3,
+    // final String markerId = const Uuid().v4();
+    final Marker newMarker = Marker(
+      markerId: const MarkerId('DESTINATION_MARKER'),
+      position: latLng,
+      infoWindow: InfoWindow(
+        title: 'Remove',
+        onTap: () {
+          markers!.removeWhere(
+            (Marker marker) => marker.markerId.value == 'DESTINATION_MARKER',
+          );
+          _hasDestinationMarker = !_hasDestinationMarker!;
+          notifyListeners();
+        },
       ),
+      zIndex: 3,
     );
+    clearMarkers();
+
+    markers!.add(newMarker);
+    _hasDestinationMarker = !_hasDestinationMarker!;
+    _mapAction = MapAction.confirmTrip;
 
     if (kDebugMode) {
-      print(markers.length);
+      print(markers!.length);
     }
 
     notifyListeners();
+  }
+
+  void clearMarkers() {
+    markers!.clear();
   }
 
   void setCameraPosition(LatLng latLng, {double zoom = 15}) {

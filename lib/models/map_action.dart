@@ -1,0 +1,4 @@
+enum MapAction {
+  selectTrip,
+  confirmTrip,
+}
