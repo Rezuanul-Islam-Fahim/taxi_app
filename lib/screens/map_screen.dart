@@ -31,13 +31,86 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Consumer<MapProvider>(
         builder: (BuildContext context, MapProvider mapProvider, _) {
           return SafeArea(
-            child: GoogleMap(
-              onMapCreated: mapProvider.onMapCreated,
-              initialCameraPosition: mapProvider.cameraPos,
-              compassEnabled: true,
-              onTap: mapProvider.onTap,
-              onCameraMove: mapProvider.onCameraMove,
-              markers: mapProvider.markers,
+            child: Stack(
+              children: [
+                GoogleMap(
+                  onMapCreated: mapProvider.onMapCreated,
+                  initialCameraPosition: mapProvider.cameraPos,
+                  compassEnabled: true,
+                  onTap: mapProvider.onTap,
+                  onCameraMove: mapProvider.onCameraMove,
+                  markers: mapProvider.markers,
+                ),
+                DraggableScrollableSheet(
+                  initialChildSize: .2,
+                  minChildSize: .1,
+                  maxChildSize: .6,
+                  builder: (BuildContext context, ScrollController scrollController) {
+                    return Container(
+                      color: Colors.red,
+                      child: ListView(
+                        controller: scrollController,
+                        children: [
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                          SizedBox(height: 10),
+                          Container(
+                            color: Colors.yellow,
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           );
         },
