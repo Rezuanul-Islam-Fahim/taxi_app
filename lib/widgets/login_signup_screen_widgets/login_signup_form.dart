@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../screens/home_screen.dart';
+import '../../screens/map_screen.dart';
 import '../../services/auth_services.dart';
 import 'text_field.dart';
 import 'form_button.dart';

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:taxi_app/screens/home_screen.dart';
+import 'package:taxi_app/screens/map_screen.dart';
 import 'package:taxi_app/screens/login_signup_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {

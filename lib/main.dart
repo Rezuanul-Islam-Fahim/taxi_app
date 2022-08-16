@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/map_screen.dart';
 import 'screens/login_signup_screen.dart';
 
 import 'screens/onboarding_screen.dart';
