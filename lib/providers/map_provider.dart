@@ -61,7 +61,7 @@ class MapProvider with ChangeNotifier {
     clearMarkers();
 
     markers!.add(newMarker);
-    _hasDestinationMarker = !_hasDestinationMarker!;
+    _hasDestinationMarker = true;
     _mapAction = MapAction.confirmTrip;
 
     if (kDebugMode) {
