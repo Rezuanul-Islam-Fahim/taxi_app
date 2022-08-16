@@ -36,11 +36,16 @@ class MapProvider with ChangeNotifier {
   }
 
   void addMarker(LatLng latLng) {
+    markers.clear();
     markers.add(Marker(
       markerId: MarkerId(const Uuid().v4()),
       position: latLng,
     ));
-    print(markers.length);
+
+    if (kDebugMode) {
+      print(markers.length);
+    }
+
     notifyListeners();
   }
 
