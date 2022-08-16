@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -36,11 +37,23 @@ class MapProvider with ChangeNotifier {
   }
 
   void addMarker(LatLng latLng) {
+    final String markerId = const Uuid().v4();
+
     markers.clear();
-    markers.add(Marker(
-      markerId: MarkerId(const Uuid().v4()),
-      position: latLng,
-    ));
+    markers.add(
+      Marker(
+        markerId: MarkerId(markerId),
+        position: latLng,
+        infoWindow: InfoWindow(
+          title: 'Remove',
+          onTap: () {
+            markers.removeWhere((Marker marker) => marker.markerId.value == markerId);
+            notifyListeners();
+          },
+        ),
+        zIndex: 3,
+      ),
+    );
 
     if (kDebugMode) {
       print(markers.length);

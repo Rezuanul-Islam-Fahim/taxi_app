@@ -25,75 +25,75 @@ class MapScreen extends StatelessWidget {
                   markers: mapProvider.markers,
                   padding: const EdgeInsets.only(bottom: 90),
                 ),
-                DraggableScrollableSheet(
-                  initialChildSize: .2,
-                  minChildSize: .1,
-                  maxChildSize: .6,
-                  builder: (BuildContext context, ScrollController scrollController) {
-                    return Container(
-                      color: Colors.red,
-                      child: ListView(
-                        controller: scrollController,
-                        children: [
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.yellow,
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                // DraggableScrollableSheet(
+                //   initialChildSize: .2,
+                //   minChildSize: .1,
+                //   maxChildSize: .6,
+                //   builder: (BuildContext context, ScrollController scrollController) {
+                //     return Container(
+                //       color: Colors.red,
+                //       child: ListView(
+                //         controller: scrollController,
+                //         children: [
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //           SizedBox(height: 10),
+                //           Container(
+                //             color: Colors.yellow,
+                //             height: 20,
+                //           ),
+                //         ],
+                //       ),
+                //     );
+                //   },
+                // ),
               ],
             ),
           );
