@@ -28,15 +28,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: GoogleMap(
-          onMapCreated: _mapProvider.onMapCreated,
-          initialCameraPosition: _mapProvider.cameraPos,
-          compassEnabled: true,
-          onTap: _mapProvider.onTap,
-          onCameraMove: _mapProvider.onCameraMove,
-          markers: _mapProvider.markers,
-        ),
+      body: Consumer<MapProvider>(
+        builder: (BuildContext context, MapProvider mapProvider, _) {
+          return SafeArea(
+            child: GoogleMap(
+              onMapCreated: mapProvider.onMapCreated,
+              initialCameraPosition: mapProvider.cameraPos,
+              compassEnabled: true,
+              onTap: mapProvider.onTap,
+              onCameraMove: mapProvider.onCameraMove,
+              markers: mapProvider.markers,
+            ),
+          );
+        },
       ),
     );
   }

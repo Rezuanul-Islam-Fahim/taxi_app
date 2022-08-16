@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class MapProvider with ChangeNotifier {
   late GoogleMapController _controller;
@@ -24,6 +25,7 @@ class MapProvider with ChangeNotifier {
       print(pos.latitude);
       print(pos.longitude);
     }
+    addMarker(pos);
   }
 
   void onCameraMove(CameraPosition pos) {
@@ -31,6 +33,15 @@ class MapProvider with ChangeNotifier {
       print(pos.target.latitude);
       print(pos.target.longitude);
     }
+  }
+
+  void addMarker(LatLng latLng) {
+    markers.add(Marker(
+      markerId: MarkerId(const Uuid().v4()),
+      position: latLng,
+    ));
+    print(markers.length);
+    notifyListeners();
   }
 
   void setCameraPosition(LatLng latLng, {double zoom = 15}) {
