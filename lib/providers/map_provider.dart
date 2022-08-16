@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_app/models/map_action.dart';
-// import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid.dart';
 
 class MapProvider with ChangeNotifier {
   late GoogleMapController? _controller;
   late CameraPosition? _cameraPos;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
-  bool? _hasDestinationMarker = false;
+  late String? _destinationMarkerId;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
   Set<Marker>? get markers => _markers;
-  bool? get hasDestinationMarker => _hasDestinationMarker!;
+  String? get destinationMarkerId => _destinationMarkerId!;
   MapAction? get mapAction => _mapAction;
 
   MapProvider() {
@@ -42,32 +42,38 @@ class MapProvider with ChangeNotifier {
   }
 
   void addMarker(LatLng latLng) {
-    // final String markerId = const Uuid().v4();
+    final String markerId = const Uuid().v4();
     final Marker newMarker = Marker(
-      markerId: const MarkerId('DESTINATION_MARKER'),
+      markerId: MarkerId(markerId),
       position: latLng,
       infoWindow: InfoWindow(
         title: 'Remove',
         onTap: () {
-          markers!.removeWhere(
-            (Marker marker) => marker.markerId.value == 'DESTINATION_MARKER',
-          );
-          _hasDestinationMarker = !_hasDestinationMarker!;
-          notifyListeners();
+          if (markerId == _destinationMarkerId) {
+            resetMapAction();
+          }
+          removeMarker(markerId);
         },
       ),
       zIndex: 3,
     );
+
     clearMarkers();
 
     markers!.add(newMarker);
-    _hasDestinationMarker = true;
+    _destinationMarkerId = markerId;
     _mapAction = MapAction.confirmTrip;
 
     if (kDebugMode) {
       print(markers!.length);
     }
 
+    notifyListeners();
+  }
+
+  void removeMarker(String markerId) {
+    markers!.removeWhere((Marker marker) => marker.markerId.value == markerId);
+    _destinationMarkerId = null;
     notifyListeners();
   }
 
@@ -80,5 +86,9 @@ class MapProvider with ChangeNotifier {
       target: LatLng(latLng.latitude, latLng.longitude),
       zoom: zoom,
     );
+  }
+
+  void resetMapAction() {
+    _mapAction = MapAction.selectTrip;
   }
 }

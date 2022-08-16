@@ -26,25 +26,62 @@ class MapScreen extends StatelessWidget {
                   markers: mapProvider.markers!,
                   padding: const EdgeInsets.only(bottom: 90),
                 ),
-                Visibility(
-                  visible: mapProvider.mapAction == MapAction.confirmTrip && mapProvider.hasDestinationMarker!,
-                  child: Positioned(
-                    bottom: 15,
-                    left: 15,
-                    right: 15,
-                    child: Container(
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                _buildConfirmTripDialog(mapProvider),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildConfirmTripDialog(MapProvider mapProvider) {
+    return Visibility(
+      visible: mapProvider.mapAction == MapAction.confirmTrip && mapProvider.destinationMarkerId != null,
+      child: Positioned(
+        bottom: 15,
+        left: 15,
+        right: 15,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+          ),
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black,
+                    padding: const EdgeInsets.all(15),
+                  ),
+                  onPressed: () {},
+                  child: const Text('CONFIRM PICKUP'),
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey[300],
+                    padding: const EdgeInsets.all(15),
+                  ),
+                  onPressed: () {
+                    mapProvider.resetMapAction();
+                    mapProvider.removeMarker(mapProvider.destinationMarkerId!);
+                  },
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
