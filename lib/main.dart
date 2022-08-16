@@ -29,7 +29,7 @@ class TaxiApp extends StatelessWidget {
         initialRoute: OnboardingScreen.route,
         routes: {
           OnboardingScreen.route: (_) => const OnboardingScreen(),
-          HomeScreen.route: (_) => const HomeScreen(),
+          MapScreen.route: (_) => const MapScreen(),
           LoginSignupScreen.route: (_) => const LoginSignupScreen(),
         },
       ),

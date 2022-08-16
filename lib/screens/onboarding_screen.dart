@@ -12,6 +12,6 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
 
-    return user != null ? const HomeScreen() : const LoginSignupScreen();
+    return user != null ? const MapScreen() : const LoginSignupScreen();
   }
 }

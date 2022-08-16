@@ -54,7 +54,7 @@ class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMix
     if (!mounted) return;
     if (isAuthenticated) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (BuildContext context) => const HomeScreen(),
+        builder: (BuildContext context) => const MapScreen(),
       ));
     }
   }

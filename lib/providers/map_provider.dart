@@ -11,13 +11,13 @@ class MapProvider with ChangeNotifier {
   GoogleMapController get controller => _controller;
   Set<Marker> get markers => _markers;
 
-  void onMapCreated(GoogleMapController controller) {
-    _controller = controller;
-  }
-
-  void mapInit() {
+  MapProvider() {
     _markers = {};
     setCameraPosition(const LatLng(37.42227936982647, -122.08611108362673));
+  }
+
+  void onMapCreated(GoogleMapController controller) {
+    _controller = controller;
   }
 
   void onTap(LatLng pos) {

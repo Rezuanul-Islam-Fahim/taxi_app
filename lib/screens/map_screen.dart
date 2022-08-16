@@ -3,18 +3,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:taxi_app/providers/map_provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class MapScreen extends StatelessWidget {
+  const MapScreen({Key? key}) : super(key: key);
 
   static const String route = '/home';
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<MapProvider>(
-      context,
-      listen: false,
-    ).mapInit();
-
     return Scaffold(
       body: Consumer<MapProvider>(
         builder: (BuildContext context, MapProvider mapProvider, _) {
@@ -28,6 +23,7 @@ class HomeScreen extends StatelessWidget {
                   onTap: mapProvider.onTap,
                   onCameraMove: mapProvider.onCameraMove,
                   markers: mapProvider.markers,
+                  padding: const EdgeInsets.only(bottom: 90),
                 ),
                 DraggableScrollableSheet(
                   initialChildSize: .2,
