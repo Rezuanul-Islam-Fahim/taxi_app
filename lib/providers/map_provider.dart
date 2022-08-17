@@ -43,10 +43,6 @@ class MapProvider with ChangeNotifier {
       print(pos.target.latitude);
       print(pos.target.longitude);
     }
-
-    if (mapAction == MapAction.selectTrip) {
-      updateMarkerPos(pos.target);
-    }
   }
 
   Future<void> setCustomPin() async {
@@ -104,14 +100,10 @@ class MapProvider with ChangeNotifier {
       print(markers!.length);
     }
 
-    _controller!.animateCamera(CameraUpdate.newLatLng(latLng));
-    // notifyListeners();
+    notifyListeners();
   }
 
   void updateMarkerPos(LatLng newPos) {
-    // Marker existingMarker = markers!.singleWhere(
-    //   (Marker marker) => marker.markerId.value == markerId,
-    // );
     markers!.remove(_destinationMarker);
     _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
     markers!.add(_destinationMarker!);
@@ -119,11 +111,6 @@ class MapProvider with ChangeNotifier {
   }
 
   void removeMarker() {
-    // Marker m = markers!.firstWhere((Marker marker) => marker.markerId.value == markerId);
-    // if (kDebugMode) {
-    //   print(m.position.latitude);
-    //   print(m.position.longitude);
-    // }
     markers!.remove(_destinationMarker);
     _destinationMarker = null;
     notifyListeners();
