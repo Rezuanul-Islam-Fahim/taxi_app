@@ -104,7 +104,8 @@ class MapProvider with ChangeNotifier {
       print(markers!.length);
     }
 
-    notifyListeners();
+    _controller!.animateCamera(CameraUpdate.newLatLng(latLng));
+    // notifyListeners();
   }
 
   void updateMarkerPos(LatLng newPos, String markerId) {
