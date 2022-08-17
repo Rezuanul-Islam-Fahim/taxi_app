@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_app/models/map_action.dart';
 import 'package:uuid/uuid.dart';
@@ -24,6 +25,34 @@ class MapProvider with ChangeNotifier {
     _markers = {};
     setCustomPin();
     setCameraPosition(const LatLng(37.42227936982647, -122.08611108362673));
+    checkLocationPermission();
+    if (kDebugMode) {
+      print('======================');
+      print('Map provider loaded');
+      print('==========================');
+    }
+  }
+
+  Future<void> checkLocationPermission() async {
+    bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!isLocationEnabled) {
+      return Future.error('Location is not enabled');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permission denied permanently');
+    }
   }
 
   void onMapCreated(GoogleMapController controller) {
