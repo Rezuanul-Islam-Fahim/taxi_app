@@ -17,7 +17,7 @@ class MapProvider with ChangeNotifier {
   MapAction? get mapAction => _mapAction;
 
   MapProvider() {
-    _mapAction = MapAction.selectTrip;
+    _mapAction = MapAction.browse;
     _markers = {};
     setCameraPosition(const LatLng(37.42227936982647, -122.08611108362673));
   }
@@ -62,7 +62,7 @@ class MapProvider with ChangeNotifier {
 
     markers!.add(newMarker);
     _destinationMarkerId = markerId;
-    _mapAction = MapAction.confirmTrip;
+    _mapAction = MapAction.selectTrip;
 
     if (kDebugMode) {
       print(markers!.length);
@@ -89,6 +89,6 @@ class MapProvider with ChangeNotifier {
   }
 
   void resetMapAction() {
-    _mapAction = MapAction.selectTrip;
+    _mapAction = MapAction.browse;
   }
 }
