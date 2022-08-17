@@ -43,6 +43,10 @@ class MapProvider with ChangeNotifier {
       print(pos.target.latitude);
       print(pos.target.longitude);
     }
+
+    if (mapAction == MapAction.selectTrip) {
+      updateMarkerPos(pos.target, _destinationMarkerId!);
+    }
   }
 
   Future<void> setCustomPin() async {
