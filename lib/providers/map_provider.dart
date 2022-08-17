@@ -66,6 +66,26 @@ class MapProvider with ChangeNotifier {
           removeMarker(markerId);
         },
       ),
+      draggable: true,
+      onDrag: (v) {
+        if (kDebugMode) {
+          print('========Drag====');
+          print(v.toString());
+        }
+      },
+      onDragStart: (v) {
+        if (kDebugMode) {
+          print('========Drag Start====');
+          print(v.toString());
+        }
+      },
+      onDragEnd: (LatLng newPos) {
+        if (kDebugMode) {
+          print('========Drag end====');
+          print(newPos.toString());
+        }
+        updateMarkerPos(newPos, markerId);
+      },
       icon: _customPin!,
       zIndex: 3,
     );
@@ -83,7 +103,35 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateMarkerPos(LatLng newPos, String markerId) {
+    Marker existingMarker = markers!.singleWhere(
+      (Marker marker) => marker.markerId.value == markerId,
+    );
+    markers!.removeWhere(
+      (Marker marker) => marker.markerId.value == markerId,
+    );
+    markers!.add(
+      Marker(
+        markerId: existingMarker.markerId,
+        position: newPos,
+        infoWindow: existingMarker.infoWindow,
+        draggable: existingMarker.draggable,
+        onDrag: existingMarker.onDrag,
+        onDragStart: existingMarker.onDragStart,
+        onDragEnd: existingMarker.onDragEnd,
+        icon: existingMarker.icon,
+        zIndex: existingMarker.zIndex,
+      ),
+    );
+    notifyListeners();
+  }
+
   void removeMarker(String markerId) {
+    Marker m = markers!.firstWhere((Marker marker) => marker.markerId.value == markerId);
+    if (kDebugMode) {
+      print(m.position.latitude);
+      print(m.position.longitude);
+    }
     markers!.removeWhere((Marker marker) => marker.markerId.value == markerId);
     _destinationMarkerId = null;
     notifyListeners();
