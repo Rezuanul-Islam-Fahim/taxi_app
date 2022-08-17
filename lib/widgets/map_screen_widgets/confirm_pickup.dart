@@ -14,7 +14,7 @@ class ConfirmPickup extends StatelessWidget {
     );
 
     return Visibility(
-      visible: mapProvider.mapAction == MapAction.selectTrip && mapProvider.destinationMarkerId != null,
+      visible: mapProvider.mapAction == MapAction.selectTrip && mapProvider.destinationMarker != null,
       child: Positioned(
         bottom: 15,
         left: 15,
@@ -48,7 +48,7 @@ class ConfirmPickup extends StatelessWidget {
                   ),
                   onPressed: () {
                     mapProvider.resetMapAction();
-                    mapProvider.removeMarker(mapProvider.destinationMarkerId!);
+                    mapProvider.removeMarker();
                   },
                   child: const Text(
                     'CANCEL',

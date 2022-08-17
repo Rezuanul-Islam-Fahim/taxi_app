@@ -9,13 +9,13 @@ class MapProvider with ChangeNotifier {
   late CameraPosition? _cameraPos;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
-  late String? _destinationMarkerId;
+  late Marker? _destinationMarker;
   late BitmapDescriptor? _customPin;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
   Set<Marker>? get markers => _markers;
-  String? get destinationMarkerId => _destinationMarkerId!;
+  Marker? get destinationMarker => _destinationMarker!;
   MapAction? get mapAction => _mapAction;
   BitmapDescriptor? get customPin => _customPin;
 
@@ -45,7 +45,7 @@ class MapProvider with ChangeNotifier {
     }
 
     if (mapAction == MapAction.selectTrip) {
-      updateMarkerPos(pos.target, _destinationMarkerId!);
+      updateMarkerPos(pos.target);
     }
   }
 
@@ -64,10 +64,10 @@ class MapProvider with ChangeNotifier {
       infoWindow: InfoWindow(
         title: 'Remove',
         onTap: () {
-          if (markerId == _destinationMarkerId) {
+          if (markerId == _destinationMarker!.markerId.value) {
             resetMapAction();
           }
-          removeMarker(markerId);
+          removeMarker();
         },
       ),
       draggable: true,
@@ -88,7 +88,7 @@ class MapProvider with ChangeNotifier {
           print('========Drag end====');
           print(newPos.toString());
         }
-        updateMarkerPos(newPos, markerId);
+        updateMarkerPos(newPos);
       },
       icon: _customPin!,
       zIndex: 3,
@@ -97,7 +97,7 @@ class MapProvider with ChangeNotifier {
     clearMarkers();
 
     markers!.add(newMarker);
-    _destinationMarkerId = markerId;
+    _destinationMarker = newMarker;
     _mapAction = MapAction.selectTrip;
 
     if (kDebugMode) {
@@ -108,37 +108,24 @@ class MapProvider with ChangeNotifier {
     // notifyListeners();
   }
 
-  void updateMarkerPos(LatLng newPos, String markerId) {
-    Marker existingMarker = markers!.singleWhere(
-      (Marker marker) => marker.markerId.value == markerId,
-    );
-    markers!.removeWhere(
-      (Marker marker) => marker.markerId.value == markerId,
-    );
-    markers!.add(
-      Marker(
-        markerId: existingMarker.markerId,
-        position: newPos,
-        infoWindow: existingMarker.infoWindow,
-        draggable: existingMarker.draggable,
-        onDrag: existingMarker.onDrag,
-        onDragStart: existingMarker.onDragStart,
-        onDragEnd: existingMarker.onDragEnd,
-        icon: existingMarker.icon,
-        zIndex: existingMarker.zIndex,
-      ),
-    );
+  void updateMarkerPos(LatLng newPos) {
+    // Marker existingMarker = markers!.singleWhere(
+    //   (Marker marker) => marker.markerId.value == markerId,
+    // );
+    markers!.remove(_destinationMarker);
+    _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
+    markers!.add(_destinationMarker!);
     notifyListeners();
   }
 
-  void removeMarker(String markerId) {
-    Marker m = markers!.firstWhere((Marker marker) => marker.markerId.value == markerId);
-    if (kDebugMode) {
-      print(m.position.latitude);
-      print(m.position.longitude);
-    }
-    markers!.removeWhere((Marker marker) => marker.markerId.value == markerId);
-    _destinationMarkerId = null;
+  void removeMarker() {
+    // Marker m = markers!.firstWhere((Marker marker) => marker.markerId.value == markerId);
+    // if (kDebugMode) {
+    //   print(m.position.latitude);
+    //   print(m.position.longitude);
+    // }
+    markers!.remove(_destinationMarker);
+    _destinationMarker = null;
     notifyListeners();
   }
 
