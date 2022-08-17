@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_app/models/map_action.dart';
 import 'package:uuid/uuid.dart';
@@ -9,16 +10,19 @@ class MapProvider with ChangeNotifier {
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
   late String? _destinationMarkerId;
+  late BitmapDescriptor? _customPin;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
   Set<Marker>? get markers => _markers;
   String? get destinationMarkerId => _destinationMarkerId!;
   MapAction? get mapAction => _mapAction;
+  BitmapDescriptor? get customPin => _customPin;
 
   MapProvider() {
     _mapAction = MapAction.browse;
     _markers = {};
+    setCustomPin();
     setCameraPosition(const LatLng(37.42227936982647, -122.08611108362673));
   }
 
@@ -41,6 +45,13 @@ class MapProvider with ChangeNotifier {
     }
   }
 
+  Future<void> setCustomPin() async {
+    _customPin = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(devicePixelRatio: 2.5),
+      'images/pin.png',
+    );
+  }
+
   void addMarker(LatLng latLng) {
     final String markerId = const Uuid().v4();
     final Marker newMarker = Marker(
@@ -55,6 +66,7 @@ class MapProvider with ChangeNotifier {
           removeMarker(markerId);
         },
       ),
+      icon: _customPin!,
       zIndex: 3,
     );
 
