@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_app/models/map_action.dart';
+import 'package:taxi_app/services/location_service.dart';
 import 'package:uuid/uuid.dart';
 
 class MapProvider with ChangeNotifier {
+  final LocationService _locationService = LocationService();
   late GoogleMapController? _controller;
-  late CameraPosition? _cameraPos;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
   late Marker? _destinationMarker;
   late BitmapDescriptor? _customPin;
   late Position? _deviceLocation;
+  CameraPosition? _cameraPos;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -26,7 +28,6 @@ class MapProvider with ChangeNotifier {
     _mapAction = MapAction.browse;
     _markers = {};
     setCustomPin();
-    setCameraPosition(const LatLng(37.42227936982647, -122.08611108362673));
     if (kDebugMode) {
       print('======================');
       print('Map provider loaded');
@@ -34,8 +35,43 @@ class MapProvider with ChangeNotifier {
     }
   }
 
+  Future<void> initializeMap() async {
+    Position? deviceLocation;
+    LatLng? cameraLatLng;
+
+    if (await _locationService.checkLocationPermission()) {
+      LocationPermission locationPermission =
+          await _locationService.getLocationPermission();
+
+      if (locationPermission == LocationPermission.whileInUse ||
+          locationPermission == LocationPermission.always) {
+        setDeviceLocation(await _locationService.getLocation());
+        deviceLocation = await _locationService.getLastKnownLocation();
+      }
+    }
+
+    if (deviceLocation != null) {
+      cameraLatLng = LatLng(
+        deviceLocation.latitude,
+        deviceLocation.longitude,
+      );
+    } else {
+      cameraLatLng = const LatLng(37.42227936982647, -122.08611108362673);
+    }
+
+    setCameraPosition(cameraLatLng);
+    notifyListeners();
+  }
+
   void setDeviceLocation(Position location) {
     _deviceLocation = location;
+  }
+
+  void setCameraPosition(LatLng latLng, {double zoom = 15}) {
+    _cameraPos = CameraPosition(
+      target: LatLng(latLng.latitude, latLng.longitude),
+      zoom: zoom,
+    );
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -130,13 +166,6 @@ class MapProvider with ChangeNotifier {
 
   void clearMarkers() {
     markers!.clear();
-  }
-
-  void setCameraPosition(LatLng latLng, {double zoom = 15}) {
-    _cameraPos = CameraPosition(
-      target: LatLng(latLng.latitude, latLng.longitude),
-      zoom: zoom,
-    );
   }
 
   void resetMapAction() {
