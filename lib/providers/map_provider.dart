@@ -45,8 +45,8 @@ class MapProvider with ChangeNotifier {
 
       if (locationPermission == LocationPermission.whileInUse ||
           locationPermission == LocationPermission.always) {
-        setDeviceLocation(await _locationService.getLocation());
-        deviceLocation = await _locationService.getLastKnownLocation();
+        deviceLocation = await _locationService.getLocation();
+        setDeviceLocation(deviceLocation);
       }
     }
 
