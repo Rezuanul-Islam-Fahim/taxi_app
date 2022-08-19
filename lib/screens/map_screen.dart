@@ -56,6 +56,8 @@ class _MapScreenState extends State<MapScreen> {
             child: Stack(
               children: [
                 GoogleMap(
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
                   onMapCreated: mapProvider.onMapCreated,
                   initialCameraPosition: mapProvider.cameraPos!,
                   compassEnabled: true,
