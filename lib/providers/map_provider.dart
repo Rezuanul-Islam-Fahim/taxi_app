@@ -12,6 +12,7 @@ class MapProvider with ChangeNotifier {
   late MapAction? _mapAction;
   late Marker? _destinationMarker;
   late BitmapDescriptor? _customPin;
+  late Position? _deviceLocation;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -19,13 +20,13 @@ class MapProvider with ChangeNotifier {
   Marker? get destinationMarker => _destinationMarker!;
   MapAction? get mapAction => _mapAction;
   BitmapDescriptor? get customPin => _customPin;
+  Position? get deviceLocation => _deviceLocation;
 
   MapProvider() {
     _mapAction = MapAction.browse;
     _markers = {};
     setCustomPin();
     setCameraPosition(const LatLng(37.42227936982647, -122.08611108362673));
-    checkLocationPermission();
     if (kDebugMode) {
       print('======================');
       print('Map provider loaded');
@@ -33,26 +34,8 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  Future<void> checkLocationPermission() async {
-    bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (!isLocationEnabled) {
-      return Future.error('Location is not enabled');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permission denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permission denied permanently');
-    }
+  void setDeviceLocation(Position location) {
+    _deviceLocation = location;
   }
 
   void onMapCreated(GoogleMapController controller) {
