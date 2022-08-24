@@ -40,13 +40,18 @@ class MapProvider with ChangeNotifier {
     LatLng? cameraLatLng;
 
     if (await _locationService.checkLocationPermission()) {
-      LocationPermission locationPermission =
-          await _locationService.getLocationPermission();
-
-      if (locationPermission == LocationPermission.whileInUse ||
-          locationPermission == LocationPermission.always) {
+      try {
         deviceLocation = await _locationService.getLocation();
         setDeviceLocation(deviceLocation);
+        // if (locationPermission == LocationPermission.whileInUse ||
+        //     locationPermission == LocationPermission.always) {
+        // }
+      } catch (error) {
+        if (kDebugMode) {
+          print('/////////////////////////');
+          print('Unable to get device location');
+          print('/////////////////////////');
+        }
       }
     }
 
