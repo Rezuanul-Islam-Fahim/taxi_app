@@ -1,10 +1,13 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:taxi_app/models/map_action.dart';
-import 'package:taxi_app/services/location_service.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:uuid/uuid.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart' as geocoding;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../models/map_action.dart';
+import '../services/location_service.dart';
 
 class MapProvider with ChangeNotifier {
   final LocationService _locationService = LocationService();
@@ -14,6 +17,7 @@ class MapProvider with ChangeNotifier {
   late Marker? _destinationMarker;
   late BitmapDescriptor? _customPin;
   late Position? _deviceLocation;
+  String? _destinationAddress = '';
   CameraPosition? _cameraPos;
 
   CameraPosition? get cameraPos => _cameraPos;
@@ -23,15 +27,16 @@ class MapProvider with ChangeNotifier {
   MapAction? get mapAction => _mapAction;
   BitmapDescriptor? get customPin => _customPin;
   Position? get deviceLocation => _deviceLocation;
+  String? get destinationAddress => _destinationAddress;
 
   MapProvider() {
     _mapAction = MapAction.browse;
     _markers = {};
     setCustomPin();
     if (kDebugMode) {
-      print('======================');
+      print('=====///=============///=====');
       print('Map provider loaded');
-      print('==========================');
+      print('///==========///==========///');
     }
   }
 
@@ -43,14 +48,11 @@ class MapProvider with ChangeNotifier {
       try {
         deviceLocation = await _locationService.getLocation();
         setDeviceLocation(deviceLocation);
-        // if (locationPermission == LocationPermission.whileInUse ||
-        //     locationPermission == LocationPermission.always) {
-        // }
       } catch (error) {
         if (kDebugMode) {
-          print('/////////////////////////');
+          print('=====///=============///=====');
           print('Unable to get device location');
-          print('/////////////////////////');
+          print('///==========///==========///');
         }
       }
     }
@@ -72,6 +74,25 @@ class MapProvider with ChangeNotifier {
     _deviceLocation = location;
   }
 
+  void setDestinationAddress(LatLng pos) {
+    Future.delayed(const Duration(seconds: 1), () {
+      geocoding
+          .placemarkFromCoordinates(pos.latitude, pos.longitude)
+          .then((List<geocoding.Placemark> places) {
+        _destinationAddress = places[2].name;
+        notifyListeners();
+
+        if (kDebugMode) {
+          print(places[2].toString());
+        }
+      });
+    });
+  }
+
+  void clearDestinationAddress() {
+    _destinationAddress = '';
+  }
+
   void setCameraPosition(LatLng latLng, {double zoom = 15}) {
     _cameraPos = CameraPosition(
       target: LatLng(latLng.latitude, latLng.longitude),
@@ -89,6 +110,7 @@ class MapProvider with ChangeNotifier {
       print(pos.longitude);
     }
     addMarker(pos);
+    setDestinationAddress(pos);
   }
 
   void onCameraMove(CameraPosition pos) {
@@ -144,33 +166,29 @@ class MapProvider with ChangeNotifier {
     );
 
     clearMarkers();
-
-    markers!.add(newMarker);
+    _markers!.add(newMarker);
     _destinationMarker = newMarker;
     _mapAction = MapAction.selectTrip;
-
-    if (kDebugMode) {
-      print(markers!.length);
-    }
 
     notifyListeners();
   }
 
   void updateMarkerPos(LatLng newPos) {
-    markers!.remove(_destinationMarker);
+    _markers!.remove(_destinationMarker);
     _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
-    markers!.add(_destinationMarker!);
+    _markers!.add(_destinationMarker!);
     notifyListeners();
   }
 
   void removeMarker() {
-    markers!.remove(_destinationMarker);
+    _markers!.remove(_destinationMarker);
     _destinationMarker = null;
     notifyListeners();
   }
 
   void clearMarkers() {
-    markers!.clear();
+    _markers!.clear();
+    clearDestinationAddress();
   }
 
   void resetMapAction() {

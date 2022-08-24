@@ -35,7 +35,7 @@ class MapScreen extends StatelessWidget {
                     : const Center(
                         child: CircularProgressIndicator(),
                       ),
-                ConfirmPickup(key: key),
+                ConfirmPickup(mapProvider: mapProvider),
               ],
             ),
           );

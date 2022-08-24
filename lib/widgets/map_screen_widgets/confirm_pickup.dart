@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:taxi_app/models/map_action.dart';
 import 'package:taxi_app/providers/map_provider.dart';
 
 class ConfirmPickup extends StatelessWidget {
-  const ConfirmPickup({Key? key}) : super(key: key);
+  const ConfirmPickup({Key? key, this.mapProvider}) : super(key: key);
+
+  final MapProvider? mapProvider;
 
   @override
   Widget build(BuildContext context) {
-    final MapProvider mapProvider = Provider.of<MapProvider>(
-      context,
-      listen: false,
-    );
-
     return Visibility(
-      visible: mapProvider.mapAction == MapAction.selectTrip && mapProvider.destinationMarker != null,
+      visible: mapProvider!.mapAction == MapAction.selectTrip &&
+          mapProvider!.destinationMarker != null,
       child: Positioned(
         bottom: 15,
         left: 15,
@@ -27,6 +24,20 @@ class ConfirmPickup extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: Column(
             children: [
+              mapProvider!.destinationAddress != ''
+                  ? Column(
+                      children: [
+                        Text(
+                          mapProvider!.destinationAddress!,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    )
+                  : const SizedBox(),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -47,8 +58,8 @@ class ConfirmPickup extends StatelessWidget {
                     padding: const EdgeInsets.all(15),
                   ),
                   onPressed: () {
-                    mapProvider.resetMapAction();
-                    mapProvider.removeMarker();
+                    mapProvider!.resetMapAction();
+                    mapProvider!.removeMarker();
                   },
                   child: const Text(
                     'CANCEL',
