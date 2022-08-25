@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart' as geocoding;
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
@@ -19,8 +19,9 @@ class MapProvider with ChangeNotifier {
   late Marker? _destinationMarker;
   late BitmapDescriptor? _customPin;
   late Set<Polyline>? _polylines;
-  late double? _fare;
+  late double? _cost;
   late String? _destinationAddress;
+  late String? _deviceAddress;
   late double? _distance;
   Position? _deviceLocation;
   CameraPosition? _cameraPos;
@@ -33,15 +34,17 @@ class MapProvider with ChangeNotifier {
   BitmapDescriptor? get customPin => _customPin;
   Position? get deviceLocation => _deviceLocation;
   String? get destinationAddress => _destinationAddress;
+  String? get deviceAddress => _deviceAddress;
   Set<Polyline>? get polylines => _polylines;
-  double? get fare => _fare;
+  double? get cost => _cost;
   double? get distance => _distance;
 
   MapProvider() {
     _mapAction = MapAction.browse;
     _deviceLocation = null;
     _destinationAddress = null;
-    _fare = null;
+    _deviceAddress = null;
+    _cost = null;
     _distance = null;
     _markers = {};
     _polylines = {};
@@ -80,6 +83,10 @@ class MapProvider with ChangeNotifier {
     }
 
     setCameraPosition(cameraLatLng);
+    setDeviceLocationAddress(
+      deviceLocation!.latitude,
+      deviceLocation.longitude,
+    );
     notifyListeners();
   }
 
@@ -87,11 +94,21 @@ class MapProvider with ChangeNotifier {
     _deviceLocation = location;
   }
 
+  void setDeviceLocationAddress(double latitude, double longitude) {
+    placemarkFromCoordinates(latitude, longitude)
+        .then((List<Placemark> places) {
+      _deviceAddress = places[2].name;
+
+      if (kDebugMode) {
+        print(places[2].toString());
+      }
+    });
+  }
+
   void setDestinationAddress(LatLng pos) {
     Future.delayed(const Duration(seconds: 1), () {
-      geocoding
-          .placemarkFromCoordinates(pos.latitude, pos.longitude)
-          .then((List<geocoding.Placemark> places) {
+      placemarkFromCoordinates(pos.latitude, pos.longitude)
+          .then((List<Placemark> places) {
         _destinationAddress = places[2].name;
         notifyListeners();
 
@@ -164,7 +181,7 @@ class MapProvider with ChangeNotifier {
     setDestinationAddress(pos);
     if (_deviceLocation != null) {
       setPolyline(pos);
-      calculateFare(pos);
+      calculatecost(pos);
     }
     notifyListeners();
   }
@@ -176,7 +193,7 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  void calculateFare(LatLng destinationPos) {
+  void calculatecost(LatLng destinationPos) {
     _distance = Geolocator.distanceBetween(
           _deviceLocation!.latitude,
           _deviceLocation!.longitude,
@@ -185,7 +202,7 @@ class MapProvider with ChangeNotifier {
         ) /
         1000;
 
-    _fare = _distance! * 0.8;
+    _cost = _distance! * 0.8;
   }
 
   Future<void> setCustomPin() async {
@@ -248,7 +265,7 @@ class MapProvider with ChangeNotifier {
 
     if (_deviceLocation != null) {
       setPolyline(newPos);
-      calculateFare(newPos);
+      calculatecost(newPos);
     }
 
     notifyListeners();
