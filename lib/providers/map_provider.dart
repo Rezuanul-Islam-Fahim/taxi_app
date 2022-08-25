@@ -233,7 +233,7 @@ class MapProvider with ChangeNotifier {
           removeMarker();
         },
       ),
-      draggable: true,
+      draggable: mapAction == MapAction.tripSelected ? true : false,
       onDrag: (v) {
         if (kDebugMode) {
           print('========Drag====');
@@ -264,18 +264,21 @@ class MapProvider with ChangeNotifier {
   }
 
   void updateMarkerPos(LatLng newPos) {
-    clearDestinationAddress();
-    _markers!.remove(_destinationMarker);
-    _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
-    _markers!.add(_destinationMarker!);
-    setDestinationAddress(newPos);
+    if (mapAction == MapAction.selectTrip ||
+        mapAction == MapAction.tripSelected) {
+      clearDestinationAddress();
+      _markers!.remove(_destinationMarker);
+      _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
+      _markers!.add(_destinationMarker!);
+      setDestinationAddress(newPos);
 
-    if (_deviceLocation != null) {
-      setPolyline(newPos);
-      calculatecost(newPos);
+      if (_deviceLocation != null) {
+        setPolyline(newPos);
+        calculatecost(newPos);
+      }
+
+      notifyListeners();
     }
-
-    notifyListeners();
   }
 
   void removeMarker() {
