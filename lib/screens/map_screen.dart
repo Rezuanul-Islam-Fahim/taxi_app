@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:taxi_app/providers/map_provider.dart';
 
 import '../widgets/map_screen_widgets/confirm_pickup.dart';
+import '../widgets/map_screen_widgets/search_driver.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -37,6 +38,7 @@ class MapScreen extends StatelessWidget {
                         child: CircularProgressIndicator(),
                       ),
                 ConfirmPickup(mapProvider: mapProvider),
+                SearchDriver(mapProvider: mapProvider),
               ],
             ),
           );

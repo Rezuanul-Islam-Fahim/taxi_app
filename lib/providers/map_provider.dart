@@ -42,7 +42,7 @@ class MapProvider with ChangeNotifier {
   double? get distance => _distance;
 
   MapProvider() {
-    _mapAction = MapAction.browse;
+    _mapAction = MapAction.selectTrip;
     _deviceLocation = null;
     _destinationLocation = null;
     _destinationAddress = null;
@@ -176,18 +176,20 @@ class MapProvider with ChangeNotifier {
   }
 
   void onTap(LatLng pos) {
-    if (kDebugMode) {
-      print(pos.latitude);
-      print(pos.longitude);
+    if (mapAction == MapAction.selectTrip) {
+      if (kDebugMode) {
+        print(pos.latitude);
+        print(pos.longitude);
+      }
+      _destinationLocation = pos;
+      addMarker(pos);
+      setDestinationAddress(pos);
+      if (_deviceLocation != null) {
+        setPolyline(pos);
+        calculatecost(pos);
+      }
+      notifyListeners();
     }
-    _destinationLocation = pos;
-    addMarker(pos);
-    setDestinationAddress(pos);
-    if (_deviceLocation != null) {
-      setPolyline(pos);
-      calculatecost(pos);
-    }
-    notifyListeners();
   }
 
   void onCameraMove(CameraPosition pos) {
@@ -257,7 +259,7 @@ class MapProvider with ChangeNotifier {
     clearMarkers();
     _markers!.add(newMarker);
     _destinationMarker = newMarker;
-    _mapAction = MapAction.selectTrip;
+    _mapAction = MapAction.tripSelected;
   }
 
   void updateMarkerPos(LatLng newPos) {
@@ -289,6 +291,11 @@ class MapProvider with ChangeNotifier {
   }
 
   void resetMapAction() {
-    _mapAction = MapAction.browse;
+    _mapAction = MapAction.selectTrip;
+  }
+
+  void changeMapAction(MapAction mapAction) {
+    _mapAction = mapAction;
+    notifyListeners();
   }
 }

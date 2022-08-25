@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_app/models/map_action.dart';
 import 'package:taxi_app/models/trip_model.dart';
 import 'package:taxi_app/providers/map_provider.dart';
@@ -28,12 +25,13 @@ class ConfirmPickup extends StatelessWidget {
     );
 
     await dbService.startTrip(newTrip);
+    mapProvider!.changeMapAction(MapAction.searchDriver);
   }
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: mapProvider!.mapAction == MapAction.selectTrip &&
+      visible: mapProvider!.mapAction == MapAction.tripSelected &&
           mapProvider!.destinationMarker != null,
       child: Positioned(
         bottom: 15,

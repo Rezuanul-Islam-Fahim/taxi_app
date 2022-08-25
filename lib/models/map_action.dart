@@ -1,4 +1,5 @@
 enum MapAction {
-  browse,
   selectTrip,
+  tripSelected,
+  searchDriver,
 }
