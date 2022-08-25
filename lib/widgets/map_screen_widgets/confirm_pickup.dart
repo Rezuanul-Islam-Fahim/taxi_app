@@ -25,6 +25,7 @@ class ConfirmPickup extends StatelessWidget {
     );
 
     await dbService.startTrip(newTrip);
+    mapProvider!.toggleMarkerOption();
     mapProvider!.changeMapAction(MapAction.searchDriver);
   }
 
@@ -90,10 +91,7 @@ class ConfirmPickup extends StatelessWidget {
                     primary: Colors.grey[300],
                     padding: const EdgeInsets.all(15),
                   ),
-                  onPressed: () {
-                    mapProvider!.resetMapAction();
-                    mapProvider!.removeMarker();
-                  },
+                  onPressed: () => mapProvider!.cancelTrip(),
                   child: const Text(
                     'CANCEL',
                     style: TextStyle(color: Colors.black54),

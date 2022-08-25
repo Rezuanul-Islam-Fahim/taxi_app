@@ -27,18 +27,33 @@ class SearchDriver extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(40),
           child: Column(
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'Searching for driver',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 30),
-              SpinKitPouringHourGlass(
+              const SizedBox(height: 30),
+              const SpinKitPouringHourGlass(
                 color: Colors.black,
                 duration: Duration(milliseconds: 1500),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.grey[300],
+                    padding: const EdgeInsets.all(15),
+                  ),
+                  onPressed: () => mapProvider!.cancelTrip(),
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                ),
               ),
             ],
           ),

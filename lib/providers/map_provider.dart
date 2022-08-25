@@ -124,6 +124,7 @@ class MapProvider with ChangeNotifier {
 
   void clearDestinationAddress() {
     _destinationAddress = null;
+    _destinationLocation = null;
   }
 
   void setCameraPosition(LatLng latLng, {double zoom = 15}) {
@@ -184,10 +185,11 @@ class MapProvider with ChangeNotifier {
       }
       _destinationLocation = pos;
       addMarker(pos);
+      _mapAction = MapAction.tripSelected;
       setDestinationAddress(pos);
       if (_deviceLocation != null) {
         setPolyline(pos);
-        calculatecost(pos);
+        calculateCost(pos);
       }
       notifyListeners();
     }
@@ -200,7 +202,7 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  void calculatecost(LatLng destinationPos) {
+  void calculateCost(LatLng destinationPos) {
     _distance = Geolocator.distanceBetween(
           _deviceLocation!.latitude,
           _deviceLocation!.longitude,
@@ -224,16 +226,7 @@ class MapProvider with ChangeNotifier {
     final Marker newMarker = Marker(
       markerId: MarkerId(markerId),
       position: latLng,
-      infoWindow: InfoWindow(
-        title: 'Remove',
-        onTap: () {
-          if (markerId == _destinationMarker!.markerId.value) {
-            resetMapAction();
-          }
-          removeMarker();
-        },
-      ),
-      draggable: mapAction == MapAction.tripSelected ? true : false,
+      draggable: true,
       onDrag: (v) {
         if (kDebugMode) {
           print('========Drag====');
@@ -260,13 +253,12 @@ class MapProvider with ChangeNotifier {
     clearMarkers();
     _markers!.add(newMarker);
     _destinationMarker = newMarker;
-    _mapAction = MapAction.tripSelected;
   }
 
   void updateMarkerPos(LatLng newPos) {
-    if (mapAction == MapAction.selectTrip ||
-        mapAction == MapAction.tripSelected) {
+    if (mapAction == MapAction.tripSelected) {
       clearDestinationAddress();
+      _destinationLocation = newPos;
       _markers!.remove(_destinationMarker);
       _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
       _markers!.add(_destinationMarker!);
@@ -274,11 +266,20 @@ class MapProvider with ChangeNotifier {
 
       if (_deviceLocation != null) {
         setPolyline(newPos);
-        calculatecost(newPos);
+        calculateCost(newPos);
       }
 
       notifyListeners();
     }
+  }
+
+  void toggleMarkerOption() {
+    _markers!.remove(_destinationMarker);
+    _destinationMarker = _destinationMarker!.copyWith(
+      draggableParam: false,
+    );
+    _markers!.add(_destinationMarker!);
+    notifyListeners();
   }
 
   void removeMarker() {
@@ -291,6 +292,7 @@ class MapProvider with ChangeNotifier {
   void clearMarkers() {
     _markers!.clear();
     _polylines!.clear();
+    _destinationMarker = null;
     clearDestinationAddress();
   }
 
@@ -300,6 +302,14 @@ class MapProvider with ChangeNotifier {
 
   void changeMapAction(MapAction mapAction) {
     _mapAction = mapAction;
+    notifyListeners();
+  }
+
+  void cancelTrip() {
+    resetMapAction();
+    clearMarkers();
+    _cost = null;
+    _distance = null;
     notifyListeners();
   }
 }
