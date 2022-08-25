@@ -8,6 +8,9 @@ class Trip {
   final double? destinationLongitude;
   final double? distance;
   final double? cost;
+  final bool? accepted;
+  final bool? started;
+  final bool? canceled;
 
   Trip({
     this.id,
@@ -19,6 +22,9 @@ class Trip {
     this.destinationLongitude,
     this.distance,
     this.cost,
+    this.accepted = false,
+    this.started = false,
+    this.canceled = false,
   });
 
   factory Trip.fromJson(Map<String, dynamic> data) => Trip(
@@ -31,6 +37,9 @@ class Trip {
         destinationLongitude: data['destinationLongitude'],
         distance: data['distance'],
         cost: data['cost'],
+        accepted: data['accepted'],
+        started: data['started'],
+        canceled: data['canceled'],
       );
 
   Map<String, dynamic> toMap() {
@@ -44,6 +53,9 @@ class Trip {
       'destinationLongitude': destinationLongitude,
       'distance': distance,
       'cost': cost,
+      'accepted': accepted,
+      'started': started,
+      'canceled': canceled,
     };
   }
 }
