@@ -176,7 +176,8 @@ class MapProvider with ChangeNotifier {
   }
 
   void onTap(LatLng pos) {
-    if (mapAction == MapAction.selectTrip) {
+    if (mapAction == MapAction.selectTrip ||
+        mapAction == MapAction.tripSelected) {
       if (kDebugMode) {
         print(pos.latitude);
         print(pos.longitude);
