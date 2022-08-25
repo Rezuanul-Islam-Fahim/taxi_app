@@ -7,7 +7,7 @@ class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> storeUser(user.User user) async {
-    await _firestore.collection('user').add(user.toMap());
+    await _firestore.collection('user').doc(user.id).set(user.toMap());
   }
 
   Future<void> startTrip(Trip trip) async {
