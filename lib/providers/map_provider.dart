@@ -20,10 +20,10 @@ class MapProvider with ChangeNotifier {
   late BitmapDescriptor? _customPin;
   late Set<Polyline>? _polylines;
   late double? _fare;
-  Position? _deviceLocation;
-  String? _destinationAddress = '';
-  CameraPosition? _cameraPos;
+  late String? _destinationAddress;
   late double? _distance;
+  Position? _deviceLocation;
+  CameraPosition? _cameraPos;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -40,6 +40,7 @@ class MapProvider with ChangeNotifier {
   MapProvider() {
     _mapAction = MapAction.browse;
     _deviceLocation = null;
+    _destinationAddress = null;
     _fare = null;
     _distance = null;
     _markers = {};
@@ -102,7 +103,7 @@ class MapProvider with ChangeNotifier {
   }
 
   void clearDestinationAddress() {
-    _destinationAddress = '';
+    _destinationAddress = null;
   }
 
   void setCameraPosition(LatLng latLng, {double zoom = 15}) {
@@ -239,13 +240,18 @@ class MapProvider with ChangeNotifier {
   }
 
   void updateMarkerPos(LatLng newPos) {
+    clearDestinationAddress();
     _markers!.remove(_destinationMarker);
     _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
     _markers!.add(_destinationMarker!);
+    setDestinationAddress(newPos);
 
     if (_deviceLocation != null) {
-      setPolyline(newPos, shouldUpdate: true);
+      setPolyline(newPos);
+      calculateFare(newPos);
     }
+
+    notifyListeners();
   }
 
   void removeMarker() {

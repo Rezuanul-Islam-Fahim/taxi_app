@@ -24,7 +24,7 @@ class ConfirmPickup extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: Column(
             children: [
-              mapProvider!.destinationAddress != ''
+              mapProvider!.destinationAddress != null
                   ? Column(
                       children: [
                         Text(
@@ -37,7 +37,7 @@ class ConfirmPickup extends StatelessWidget {
                         const SizedBox(height: 5),
                       ],
                     )
-                  : const SizedBox(),
+                  : Container(),
               mapProvider!.fare != null && mapProvider!.distance != null
                   ? Column(
                       children: [
