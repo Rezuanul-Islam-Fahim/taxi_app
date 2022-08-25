@@ -5,7 +5,9 @@ import 'package:uuid/uuid.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
+import '../constant.dart';
 import '../models/map_action.dart';
 import '../services/location_service.dart';
 
@@ -16,7 +18,8 @@ class MapProvider with ChangeNotifier {
   late MapAction? _mapAction;
   late Marker? _destinationMarker;
   late BitmapDescriptor? _customPin;
-  late Position? _deviceLocation;
+  late Set<Polyline>? _polylines;
+  Position? _deviceLocation;
   String? _destinationAddress = '';
   CameraPosition? _cameraPos;
 
@@ -28,10 +31,13 @@ class MapProvider with ChangeNotifier {
   BitmapDescriptor? get customPin => _customPin;
   Position? get deviceLocation => _deviceLocation;
   String? get destinationAddress => _destinationAddress;
+  Set<Polyline>? get polylines => _polylines;
 
   MapProvider() {
     _mapAction = MapAction.browse;
+    _deviceLocation = null;
     _markers = {};
+    _polylines = {};
     setCustomPin();
     if (kDebugMode) {
       print('=====///=============///=====');
@@ -104,6 +110,44 @@ class MapProvider with ChangeNotifier {
     _controller = controller;
   }
 
+  Future<void> setPolyline(
+    LatLng destinationPoint, {
+    bool shouldUpdate = false,
+  }) async {
+    _polylines!.clear();
+
+    PolylineResult result = await PolylinePoints().getRouteBetweenCoordinates(
+      googleMapApi,
+      PointLatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
+      PointLatLng(
+        destinationPoint.latitude,
+        destinationPoint.longitude,
+      ),
+    );
+
+    if (kDebugMode) {
+      print(result.points);
+    }
+
+    if (result.points.isNotEmpty) {
+      final String polylineId = const Uuid().v4();
+
+      _polylines!.add(
+        Polyline(
+          polylineId: PolylineId(polylineId),
+          color: Colors.black87,
+          points: result.points
+              .map((PointLatLng point) =>
+                  LatLng(point.latitude, point.longitude))
+              .toList(),
+          width: 4,
+        ),
+      );
+    }
+
+    if (shouldUpdate) notifyListeners();
+  }
+
   void onTap(LatLng pos) {
     if (kDebugMode) {
       print(pos.latitude);
@@ -111,6 +155,10 @@ class MapProvider with ChangeNotifier {
     }
     addMarker(pos);
     setDestinationAddress(pos);
+    if (_deviceLocation != null) {
+      setPolyline(pos);
+    }
+    notifyListeners();
   }
 
   void onCameraMove(CameraPosition pos) {
@@ -169,25 +217,28 @@ class MapProvider with ChangeNotifier {
     _markers!.add(newMarker);
     _destinationMarker = newMarker;
     _mapAction = MapAction.selectTrip;
-
-    notifyListeners();
   }
 
   void updateMarkerPos(LatLng newPos) {
     _markers!.remove(_destinationMarker);
     _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
     _markers!.add(_destinationMarker!);
-    notifyListeners();
+
+    if (_deviceLocation != null) {
+      setPolyline(newPos, shouldUpdate: true);
+    }
   }
 
   void removeMarker() {
     _markers!.remove(_destinationMarker);
     _destinationMarker = null;
+    _polylines!.clear();
     notifyListeners();
   }
 
   void clearMarkers() {
     _markers!.clear();
+    _polylines!.clear();
     clearDestinationAddress();
   }
 
