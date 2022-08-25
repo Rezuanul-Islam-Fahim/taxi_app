@@ -23,6 +23,7 @@ class MapProvider with ChangeNotifier {
   late String? _destinationAddress;
   late String? _deviceAddress;
   late double? _distance;
+  late LatLng? _destinationLocation;
   Position? _deviceLocation;
   CameraPosition? _cameraPos;
 
@@ -33,6 +34,7 @@ class MapProvider with ChangeNotifier {
   MapAction? get mapAction => _mapAction;
   BitmapDescriptor? get customPin => _customPin;
   Position? get deviceLocation => _deviceLocation;
+  LatLng? get destinationLocation => _destinationLocation;
   String? get destinationAddress => _destinationAddress;
   String? get deviceAddress => _deviceAddress;
   Set<Polyline>? get polylines => _polylines;
@@ -42,6 +44,7 @@ class MapProvider with ChangeNotifier {
   MapProvider() {
     _mapAction = MapAction.browse;
     _deviceLocation = null;
+    _destinationLocation = null;
     _destinationAddress = null;
     _deviceAddress = null;
     _cost = null;
@@ -177,6 +180,7 @@ class MapProvider with ChangeNotifier {
       print(pos.latitude);
       print(pos.longitude);
     }
+    _destinationLocation = pos;
     addMarker(pos);
     setDestinationAddress(pos);
     if (_deviceLocation != null) {

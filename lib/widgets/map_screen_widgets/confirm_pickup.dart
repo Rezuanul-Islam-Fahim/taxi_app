@@ -1,11 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_app/models/map_action.dart';
+import 'package:taxi_app/models/trip_model.dart';
 import 'package:taxi_app/providers/map_provider.dart';
+
+import '../../services/database_service.dart';
 
 class ConfirmPickup extends StatelessWidget {
   const ConfirmPickup({Key? key, this.mapProvider}) : super(key: key);
 
   final MapProvider? mapProvider;
+
+  Future<void> _startTrip() async {
+    final DatabaseService dbService = DatabaseService();
+
+    Trip newTrip = Trip(
+      pickupAddress: mapProvider!.deviceAddress,
+      destinationAddress: mapProvider!.destinationAddress,
+      pickupLatitude: mapProvider!.deviceLocation!.latitude,
+      pickupLongitude: mapProvider!.deviceLocation!.longitude,
+      destinationLatitude: mapProvider!.deviceLocation!.latitude,
+      destinationLongitude: mapProvider!.deviceLocation!.longitude,
+      distance: mapProvider!.distance,
+      cost: mapProvider!.cost,
+    );
+
+    await dbService.startTrip(newTrip);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +80,7 @@ class ConfirmPickup extends StatelessWidget {
                     primary: Colors.black,
                     padding: const EdgeInsets.all(15),
                   ),
-                  onPressed: () {},
+                  onPressed: _startTrip,
                   child: const Text('CONFIRM PICKUP'),
                 ),
               ),
