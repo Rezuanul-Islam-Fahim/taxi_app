@@ -19,9 +19,11 @@ class MapProvider with ChangeNotifier {
   late Marker? _destinationMarker;
   late BitmapDescriptor? _customPin;
   late Set<Polyline>? _polylines;
+  late double? _fare;
   Position? _deviceLocation;
   String? _destinationAddress = '';
   CameraPosition? _cameraPos;
+  late double? _distance;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -32,10 +34,14 @@ class MapProvider with ChangeNotifier {
   Position? get deviceLocation => _deviceLocation;
   String? get destinationAddress => _destinationAddress;
   Set<Polyline>? get polylines => _polylines;
+  double? get fare => _fare;
+  double? get distance => _distance;
 
   MapProvider() {
     _mapAction = MapAction.browse;
     _deviceLocation = null;
+    _fare = null;
+    _distance = null;
     _markers = {};
     _polylines = {};
     setCustomPin();
@@ -157,6 +163,7 @@ class MapProvider with ChangeNotifier {
     setDestinationAddress(pos);
     if (_deviceLocation != null) {
       setPolyline(pos);
+      calculateFare(pos);
     }
     notifyListeners();
   }
@@ -166,6 +173,18 @@ class MapProvider with ChangeNotifier {
       print(pos.target.latitude);
       print(pos.target.longitude);
     }
+  }
+
+  void calculateFare(LatLng destinationPos) {
+    _distance = Geolocator.distanceBetween(
+          _deviceLocation!.latitude,
+          _deviceLocation!.longitude,
+          destinationPos.latitude,
+          destinationPos.longitude,
+        ) /
+        1000;
+
+    _fare = _distance! * 0.8;
   }
 
   Future<void> setCustomPin() async {
