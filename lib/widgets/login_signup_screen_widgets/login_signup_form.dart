@@ -13,7 +13,8 @@ class LoginForm extends StatefulWidget {
   State<LoginForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMixin {
+class _LoginFormState extends State<LoginForm>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthServices _auth = AuthServices();
   late AuthMode authMode;
@@ -45,7 +46,7 @@ class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMix
       );
     } else {
       isAuthenticated = await _auth.createAccount(
-        userName: _userName,
+        username: _userName,
         email: _email,
         password: _password,
       );
@@ -111,7 +112,9 @@ class _LoginFormState extends State<LoginForm> with SingleTickerProviderStateMix
           ),
           const SizedBox(height: 15),
           FormButton(
-            title: authMode == AuthMode.login ? 'Create An Account' : 'Already have an account?',
+            title: authMode == AuthMode.login
+                ? 'Create An Account'
+                : 'Already have an account?',
             handler: _switchMode,
           ),
         ],

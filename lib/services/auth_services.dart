@@ -15,10 +15,18 @@ class AuthServices {
     }
 
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: email!,
-        password: password!,
-      );
+      if (await _db.checkUser(email!)) {
+        await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password!,
+        );
+      } else {
+        if (kDebugMode) {
+          print('User not found');
+        }
+
+        return false;
+      }
 
       return true;
     } catch (e) {
@@ -31,12 +39,12 @@ class AuthServices {
   }
 
   Future<bool> createAccount({
-    String? userName,
+    String? username,
     String? email,
     String? password,
   }) async {
     if (kDebugMode) {
-      print(userName);
+      print(username);
       print(email);
       print(password);
     }
@@ -49,7 +57,7 @@ class AuthServices {
       await _db.storeUser(
         user.User(
           id: userData.user!.uid,
-          userName: userName,
+          username: username,
           email: email,
         ),
       );

@@ -7,7 +7,16 @@ class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> storeUser(user.User user) async {
-    await _firestore.collection('user').doc(user.id).set(user.toMap());
+    await _firestore.collection('users').doc(user.id).set(user.toMap());
+  }
+
+  Future<bool> checkUser(String email) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+
+    return querySnapshot.size == 1 ? true : false;
   }
 
   Future<void> startTrip(Trip trip) async {

@@ -81,15 +81,16 @@ class MapProvider with ChangeNotifier {
         deviceLocation.latitude,
         deviceLocation.longitude,
       );
+      setDeviceLocationAddress(
+        deviceLocation.latitude,
+        deviceLocation.longitude,
+      );
     } else {
       cameraLatLng = const LatLng(37.42227936982647, -122.08611108362673);
     }
 
     setCameraPosition(cameraLatLng);
-    setDeviceLocationAddress(
-      deviceLocation!.latitude,
-      deviceLocation.longitude,
-    );
+
     notifyListeners();
   }
 
