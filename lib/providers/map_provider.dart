@@ -119,7 +119,6 @@ class MapProvider with ChangeNotifier {
         print(pos.latitude);
         print(pos.longitude);
       }
-      _destinationLocation = pos;
       addMarker(pos);
       _mapAction = MapAction.tripSelected;
       setDestinationAddress(pos);
@@ -274,6 +273,8 @@ class MapProvider with ChangeNotifier {
   }
 
   void setDestinationAddress(LatLng pos) {
+    _destinationLocation = pos;
+
     Future.delayed(const Duration(seconds: 1), () {
       placemarkFromCoordinates(pos.latitude, pos.longitude)
           .then((List<Placemark> places) {
