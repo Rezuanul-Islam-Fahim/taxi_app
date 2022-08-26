@@ -24,8 +24,8 @@ class MapProvider with ChangeNotifier {
   late String? _deviceAddress;
   late double? _distance;
   late LatLng? _destinationLocation;
-  Position? _deviceLocation;
-  CameraPosition? _cameraPos;
+  late Position? _deviceLocation;
+  late CameraPosition? _cameraPos;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -49,9 +49,11 @@ class MapProvider with ChangeNotifier {
     _deviceAddress = null;
     _cost = null;
     _distance = null;
+    _cameraPos = null;
     _markers = {};
     _polylines = {};
     setCustomPin();
+
     if (kDebugMode) {
       print('=====///=============///=====');
       print('Map provider loaded');
@@ -94,87 +96,15 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setDeviceLocation(Position location) {
-    _deviceLocation = location;
-  }
-
-  void setDeviceLocationAddress(double latitude, double longitude) {
-    placemarkFromCoordinates(latitude, longitude)
-        .then((List<Placemark> places) {
-      _deviceAddress = places[2].name;
-
-      if (kDebugMode) {
-        print(places[2].toString());
-      }
-    });
-  }
-
-  void setDestinationAddress(LatLng pos) {
-    Future.delayed(const Duration(seconds: 1), () {
-      placemarkFromCoordinates(pos.latitude, pos.longitude)
-          .then((List<Placemark> places) {
-        _destinationAddress = places[2].name;
-        notifyListeners();
-
-        if (kDebugMode) {
-          print(places[2].toString());
-        }
-      });
-    });
-  }
-
-  void clearDestinationAddress() {
-    _destinationAddress = null;
-    _destinationLocation = null;
-  }
-
-  void setCameraPosition(LatLng latLng, {double zoom = 15}) {
-    _cameraPos = CameraPosition(
-      target: LatLng(latLng.latitude, latLng.longitude),
-      zoom: zoom,
+  Future<void> setCustomPin() async {
+    _customPin = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(devicePixelRatio: 2.5),
+      'images/pin.png',
     );
   }
 
   void onMapCreated(GoogleMapController controller) {
     _controller = controller;
-  }
-
-  Future<void> setPolyline(
-    LatLng destinationPoint, {
-    bool shouldUpdate = false,
-  }) async {
-    _polylines!.clear();
-
-    PolylineResult result = await PolylinePoints().getRouteBetweenCoordinates(
-      googleMapApi,
-      PointLatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
-      PointLatLng(
-        destinationPoint.latitude,
-        destinationPoint.longitude,
-      ),
-    );
-
-    if (kDebugMode) {
-      print(result.points);
-    }
-
-    if (result.points.isNotEmpty) {
-      final String polylineId = const Uuid().v4();
-
-      _polylines!.add(
-        Polyline(
-          polylineId: PolylineId(polylineId),
-          color: Colors.black87,
-          points: result.points
-              .map((PointLatLng point) =>
-                  LatLng(point.latitude, point.longitude))
-              .toList(),
-          width: 4,
-        ),
-      );
-    }
-
-    if (shouldUpdate) notifyListeners();
   }
 
   void onTap(LatLng pos) {
@@ -203,22 +133,10 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  void calculateCost(LatLng destinationPos) {
-    _distance = Geolocator.distanceBetween(
-          _deviceLocation!.latitude,
-          _deviceLocation!.longitude,
-          destinationPos.latitude,
-          destinationPos.longitude,
-        ) /
-        1000;
-
-    _cost = _distance! * 0.8;
-  }
-
-  Future<void> setCustomPin() async {
-    _customPin = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(devicePixelRatio: 2.5),
-      'images/pin.png',
+  void setCameraPosition(LatLng latLng, {double zoom = 15}) {
+    _cameraPos = CameraPosition(
+      target: LatLng(latLng.latitude, latLng.longitude),
+      zoom: zoom,
     );
   }
 
@@ -295,6 +213,90 @@ class MapProvider with ChangeNotifier {
     _polylines!.clear();
     _destinationMarker = null;
     clearDestinationAddress();
+  }
+
+  Future<void> setPolyline(
+    LatLng destinationPoint, {
+    bool shouldUpdate = false,
+  }) async {
+    _polylines!.clear();
+
+    PolylineResult result = await PolylinePoints().getRouteBetweenCoordinates(
+      googleMapApi,
+      PointLatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
+      PointLatLng(
+        destinationPoint.latitude,
+        destinationPoint.longitude,
+      ),
+    );
+
+    if (kDebugMode) {
+      print(result.points);
+    }
+
+    if (result.points.isNotEmpty) {
+      final String polylineId = const Uuid().v4();
+
+      _polylines!.add(
+        Polyline(
+          polylineId: PolylineId(polylineId),
+          color: Colors.black87,
+          points: result.points
+              .map((PointLatLng point) =>
+                  LatLng(point.latitude, point.longitude))
+              .toList(),
+          width: 4,
+        ),
+      );
+    }
+
+    if (shouldUpdate) notifyListeners();
+  }
+
+  void setDeviceLocation(Position location) {
+    _deviceLocation = location;
+  }
+
+  void setDeviceLocationAddress(double latitude, double longitude) {
+    placemarkFromCoordinates(latitude, longitude)
+        .then((List<Placemark> places) {
+      _deviceAddress = places[2].name;
+
+      if (kDebugMode) {
+        print(places[2].toString());
+      }
+    });
+  }
+
+  void setDestinationAddress(LatLng pos) {
+    Future.delayed(const Duration(seconds: 1), () {
+      placemarkFromCoordinates(pos.latitude, pos.longitude)
+          .then((List<Placemark> places) {
+        _destinationAddress = places[2].name;
+        notifyListeners();
+
+        if (kDebugMode) {
+          print(places[2].toString());
+        }
+      });
+    });
+  }
+
+  void clearDestinationAddress() {
+    _destinationAddress = null;
+    _destinationLocation = null;
+  }
+
+  void calculateCost(LatLng destinationPos) {
+    _distance = Geolocator.distanceBetween(
+          _deviceLocation!.latitude,
+          _deviceLocation!.longitude,
+          destinationPos.latitude,
+          destinationPos.longitude,
+        ) /
+        1000;
+
+    _cost = _distance! * 0.8;
   }
 
   void resetMapAction() {
