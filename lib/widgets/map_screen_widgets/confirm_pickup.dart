@@ -24,9 +24,10 @@ class ConfirmPickup extends StatelessWidget {
       cost: mapProvider!.cost,
     );
 
-    await dbService.startTrip(newTrip);
+    String tripId = await dbService.startTrip(newTrip);
     mapProvider!.toggleMarkerOption();
     mapProvider!.changeMapAction(MapAction.searchDriver);
+    mapProvider!.setCurrentTripId(tripId);
   }
 
   @override

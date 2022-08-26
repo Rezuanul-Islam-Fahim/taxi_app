@@ -9,10 +9,12 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 import '../constant.dart';
 import '../models/map_action.dart';
+import '../services/database_service.dart';
 import '../services/location_service.dart';
 
 class MapProvider with ChangeNotifier {
   final LocationService _locationService = LocationService();
+  final DatabaseService _dbService = DatabaseService();
   late GoogleMapController? _controller;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
@@ -26,6 +28,7 @@ class MapProvider with ChangeNotifier {
   late LatLng? _destinationLocation;
   late Position? _deviceLocation;
   late CameraPosition? _cameraPos;
+  late String? _currentTripId;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -40,6 +43,7 @@ class MapProvider with ChangeNotifier {
   Set<Polyline>? get polylines => _polylines;
   double? get cost => _cost;
   double? get distance => _distance;
+  String? get currentTripId => _currentTripId;
 
   MapProvider() {
     _mapAction = MapAction.selectTrip;
@@ -50,6 +54,7 @@ class MapProvider with ChangeNotifier {
     _cost = null;
     _distance = null;
     _cameraPos = null;
+    _currentTripId = null;
     _markers = {};
     _polylines = {};
     setCustomPin();
@@ -308,11 +313,16 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setCurrentTripId(String id) {
+    _currentTripId = id;
+  }
+
   void cancelTrip() {
     resetMapAction();
     clearMarkers();
     _cost = null;
     _distance = null;
+    _dbService.cancelTrip(_currentTripId!);
     notifyListeners();
   }
 }

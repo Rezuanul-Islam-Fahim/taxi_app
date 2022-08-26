@@ -19,9 +19,15 @@ class DatabaseService {
     return querySnapshot.size == 1 ? true : false;
   }
 
-  Future<void> startTrip(Trip trip) async {
+  Future<String> startTrip(Trip trip) async {
     String docId = _firestore.collection('trips').doc().id;
     trip.id = docId;
     await _firestore.collection('trips').doc(docId).set(trip.toMap());
+
+    return docId;
+  }
+
+  Future<void> cancelTrip(String tripId) async {
+    _firestore.collection('trips').doc(tripId).update({'canceled': true});
   }
 }
