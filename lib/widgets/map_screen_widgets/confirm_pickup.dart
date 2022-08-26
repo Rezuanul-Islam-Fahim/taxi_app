@@ -18,8 +18,8 @@ class ConfirmPickup extends StatelessWidget {
       destinationAddress: mapProvider!.destinationAddress,
       pickupLatitude: mapProvider!.deviceLocation!.latitude,
       pickupLongitude: mapProvider!.deviceLocation!.longitude,
-      destinationLatitude: mapProvider!.deviceLocation!.latitude,
-      destinationLongitude: mapProvider!.deviceLocation!.longitude,
+      destinationLatitude: mapProvider!.destinationLocation!.latitude,
+      destinationLongitude: mapProvider!.destinationLocation!.longitude,
       distance: mapProvider!.distance,
       cost: mapProvider!.cost,
     );
