@@ -137,6 +137,8 @@ class MapProvider with ChangeNotifier {
   void onTap(LatLng pos) async {
     if (mapAction == MapAction.selectTrip ||
         mapAction == MapAction.tripSelected) {
+      clearRoutes();
+
       if (kDebugMode) {
         print(pos.latitude);
         print(pos.longitude);
@@ -146,14 +148,16 @@ class MapProvider with ChangeNotifier {
       addMarker(pos);
       notifyListeners();
 
-      await setDestinationAddress(pos);
+      Future.delayed(const Duration(milliseconds: 500), () async {
+        await setDestinationAddress(pos);
 
-      if (_deviceLocation != null) {
-        await setPolyline(pos);
-        calculateCost(pos);
-      }
+        if (_deviceLocation != null) {
+          await setPolyline(pos);
+          calculateCost(pos);
+        }
 
-      notifyListeners();
+        notifyListeners();
+      });
     }
   }
 
@@ -186,20 +190,22 @@ class MapProvider with ChangeNotifier {
       zIndex: 3,
     );
 
-    clearRoutes();
     _markers!.add(newMarker);
     _destinationMarker = newMarker;
   }
 
-  void updateMarkerPos(LatLng newPos) {
+  Future<void> updateMarkerPos(LatLng newPos) async {
     if (mapAction == MapAction.tripSelected) {
+      clearRoutes();
       _markers!.remove(_destinationMarker);
       _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
       _markers!.add(_destinationMarker!);
-      setDestinationAddress(newPos);
+      notifyListeners();
+
+      await setDestinationAddress(newPos);
 
       if (_deviceLocation != null) {
-        setPolyline(newPos);
+        await setPolyline(newPos);
         calculateCost(newPos);
       }
 
@@ -219,6 +225,8 @@ class MapProvider with ChangeNotifier {
     _markers!.clear();
     _polylines!.clear();
     _destinationMarker = null;
+    _distance = null;
+    _cost = null;
     clearDestinationAddress();
   }
 

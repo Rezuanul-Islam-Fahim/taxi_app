@@ -47,32 +47,39 @@ class ConfirmPickup extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: Column(
             children: [
-              mapProvider!.destinationAddress != null
+              mapProvider!.destinationLocation != null
                   ? Column(
                       children: [
-                        Text(
-                          mapProvider!.destinationAddress!,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                        if (mapProvider!.destinationAddress != null)
+                          Text(
+                            mapProvider!.destinationAddress!,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                        const SizedBox(height: 5),
+                        if (mapProvider!.distance != null)
+                          Text(
+                            'Distance: ${mapProvider!.distance!.toStringAsFixed(2)} km',
+                          ),
+                        if (mapProvider!.cost != null)
+                          Text(
+                            'Trip will cost: \$${mapProvider!.cost!.toStringAsFixed(2)}',
+                          ),
                         const SizedBox(height: 5),
                       ],
                     )
-                  : Container(),
-              mapProvider!.cost != null && mapProvider!.distance != null
-                  ? Column(
-                      children: [
-                        Text(
-                            'Distance: ${mapProvider!.distance!.toStringAsFixed(2)} km'),
-                        Text(
-                          'Trip will cost: \$${mapProvider!.cost!.toStringAsFixed(2)}',
+                  : const Padding(
+                      padding: EdgeInsets.only(bottom: 15.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(),
                         ),
-                        const SizedBox(height: 5),
-                      ],
-                    )
-                  : Container(),
+                      ),
+                    ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
