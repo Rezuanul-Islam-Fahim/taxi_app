@@ -134,7 +134,7 @@ class MapProvider with ChangeNotifier {
     );
   }
 
-  void onTap(LatLng pos) {
+  void onTap(LatLng pos) async {
     if (mapAction == MapAction.selectTrip ||
         mapAction == MapAction.tripSelected) {
       if (kDebugMode) {
@@ -144,10 +144,12 @@ class MapProvider with ChangeNotifier {
 
       changeMapAction(MapAction.tripSelected);
       addMarker(pos);
-      setDestinationAddress(pos);
+      notifyListeners();
+
+      await setDestinationAddress(pos);
 
       if (_deviceLocation != null) {
-        setPolyline(pos);
+        await setPolyline(pos);
         calculateCost(pos);
       }
 
@@ -256,19 +258,18 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  void setDestinationAddress(LatLng pos) {
+  Future<void> setDestinationAddress(LatLng pos) async {
     _destinationLocation = pos;
 
-    Future.delayed(const Duration(seconds: 1), () {
-      placemarkFromCoordinates(pos.latitude, pos.longitude)
-          .then((List<Placemark> places) {
-        _destinationAddress = places[2].name;
+    List<Placemark> places = await placemarkFromCoordinates(
+      pos.latitude,
+      pos.longitude,
+    );
+    _destinationAddress = places[2].name;
 
-        if (kDebugMode) {
-          print(places[2].toString());
-        }
-      });
-    });
+    if (kDebugMode) {
+      print(places[2].toString());
+    }
   }
 
   void clearDestinationAddress() {
