@@ -179,12 +179,12 @@ class MapProvider with ChangeNotifier {
           print(v.toString());
         }
       },
-      onDragEnd: (LatLng newPos) {
+      onDragEnd: (LatLng newPos) async {
         if (kDebugMode) {
           print('========Drag end====');
           print(newPos.toString());
         }
-        updateMarkerPos(newPos);
+        await updateMarkerPos(newPos);
       },
       icon: _customPin!,
       zIndex: 3,
@@ -196,20 +196,24 @@ class MapProvider with ChangeNotifier {
 
   Future<void> updateMarkerPos(LatLng newPos) async {
     if (mapAction == MapAction.tripSelected) {
+      Marker marker = _destinationMarker!;
       clearRoutes();
-      _markers!.remove(_destinationMarker);
-      _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
-      _markers!.add(_destinationMarker!);
+      _markers!.remove(marker);
+      marker = marker.copyWith(positionParam: newPos);
+      _markers!.add(marker);
+      _destinationMarker = marker;
       notifyListeners();
 
-      await setDestinationAddress(newPos);
+      Future.delayed(const Duration(milliseconds: 500), () async {
+        await setDestinationAddress(newPos);
 
-      if (_deviceLocation != null) {
-        await setPolyline(newPos);
-        calculateCost(newPos);
-      }
+        if (_deviceLocation != null) {
+          await setPolyline(newPos);
+          calculateCost(newPos);
+        }
 
-      notifyListeners();
+        notifyListeners();
+      });
     }
   }
 
