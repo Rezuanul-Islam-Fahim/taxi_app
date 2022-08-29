@@ -10,15 +10,6 @@ class DatabaseService {
     await _firestore.collection('users').doc(user.id).set(user.toMap());
   }
 
-  Future<bool> checkUser(String email) async {
-    QuerySnapshot querySnapshot = await _firestore
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-
-    return querySnapshot.size == 1 ? true : false;
-  }
-
   Future<String> startTrip(Trip trip) async {
     String docId = _firestore.collection('trips').doc().id;
     trip.id = docId;

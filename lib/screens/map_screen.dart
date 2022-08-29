@@ -6,15 +6,24 @@ import 'package:taxi_app/providers/map_provider.dart';
 import '../widgets/map_screen_widgets/confirm_pickup.dart';
 import '../widgets/map_screen_widgets/search_driver.dart';
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
 
   static const String route = '/home';
 
   @override
-  Widget build(BuildContext context) {
-    Provider.of<MapProvider>(context, listen: false).initializeMap();
+  State<MapScreen> createState() => _MapScreenState();
+}
 
+class _MapScreenState extends State<MapScreen> {
+  @override
+  void initState() {
+    Provider.of<MapProvider>(context, listen: false).initializeMap();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<MapProvider>(
         builder: (BuildContext context, MapProvider mapProvider, _) {
