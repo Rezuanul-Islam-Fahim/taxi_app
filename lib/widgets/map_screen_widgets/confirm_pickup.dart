@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_app/models/map_action.dart';
 import 'package:taxi_app/models/trip_model.dart';
@@ -22,11 +23,11 @@ class ConfirmPickup extends StatelessWidget {
       destinationLongitude: mapProvider!.destinationLocation!.longitude,
       distance: mapProvider!.distance,
       cost: mapProvider!.cost,
+      passengerId: FirebaseAuth.instance.currentUser!.uid,
     );
 
     String tripId = await dbService.startTrip(newTrip);
-    mapProvider!.toggleMarkerOption();
-    mapProvider!.changeMapAction(MapAction.searchDriver);
+    mapProvider!.confirmTrip();
   }
 
   @override

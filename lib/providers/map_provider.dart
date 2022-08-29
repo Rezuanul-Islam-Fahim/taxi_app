@@ -212,7 +212,7 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  void toggleMarkerOption() {
+  void toggleMarkerDraggable() {
     _markers!.remove(_destinationMarker);
     _destinationMarker = _destinationMarker!.copyWith(
       draggableParam: false,
@@ -302,6 +302,13 @@ class MapProvider with ChangeNotifier {
 
   void changeMapAction(MapAction mapAction) {
     _mapAction = mapAction;
+  }
+
+  void confirmTrip() {
+    changeMapAction(MapAction.searchDriver);
+    toggleMarkerDraggable();
+
+    notifyListeners();
   }
 
   void cancelTrip() {
