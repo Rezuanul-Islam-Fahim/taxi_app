@@ -66,6 +66,13 @@ class MapProvider with ChangeNotifier {
     }
   }
 
+  Future<void> setCustomPin() async {
+    _customPin = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(devicePixelRatio: 2.5),
+      'images/pin.png',
+    );
+  }
+
   Future<void> initializeMap() async {
     Position? deviceLocation;
     LatLng? cameraLatLng;
@@ -73,7 +80,6 @@ class MapProvider with ChangeNotifier {
     if (await _locationService.checkLocationPermission()) {
       try {
         deviceLocation = await _locationService.getLocation();
-        setDeviceLocation(deviceLocation);
       } catch (error) {
         if (kDebugMode) {
           print('=====///=============///=====');
@@ -88,6 +94,7 @@ class MapProvider with ChangeNotifier {
         deviceLocation.latitude,
         deviceLocation.longitude,
       );
+      setDeviceLocation(deviceLocation);
       setDeviceLocationAddress(
         deviceLocation.latitude,
         deviceLocation.longitude,
@@ -101,15 +108,30 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setCustomPin() async {
-    _customPin = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(devicePixelRatio: 2.5),
-      'images/pin.png',
-    );
+  void setDeviceLocation(Position location) {
+    _deviceLocation = location;
+  }
+
+  void setDeviceLocationAddress(double latitude, double longitude) {
+    placemarkFromCoordinates(latitude, longitude)
+        .then((List<Placemark> places) {
+      _deviceAddress = places[2].name;
+
+      if (kDebugMode) {
+        print(places[2].toString());
+      }
+    });
   }
 
   void onMapCreated(GoogleMapController controller) {
     _controller = controller;
+  }
+
+  void setCameraPosition(LatLng latLng, {double zoom = 15}) {
+    _cameraPos = CameraPosition(
+      target: LatLng(latLng.latitude, latLng.longitude),
+      zoom: zoom,
+    );
   }
 
   void onTap(LatLng pos) {
@@ -119,29 +141,18 @@ class MapProvider with ChangeNotifier {
         print(pos.latitude);
         print(pos.longitude);
       }
+
+      changeMapAction(MapAction.tripSelected);
       addMarker(pos);
-      _mapAction = MapAction.tripSelected;
       setDestinationAddress(pos);
+
       if (_deviceLocation != null) {
         setPolyline(pos);
         calculateCost(pos);
       }
+
       notifyListeners();
     }
-  }
-
-  void onCameraMove(CameraPosition pos) {
-    if (kDebugMode) {
-      print(pos.target.latitude);
-      print(pos.target.longitude);
-    }
-  }
-
-  void setCameraPosition(LatLng latLng, {double zoom = 15}) {
-    _cameraPos = CameraPosition(
-      target: LatLng(latLng.latitude, latLng.longitude),
-      zoom: zoom,
-    );
   }
 
   void addMarker(LatLng latLng) {
@@ -173,15 +184,13 @@ class MapProvider with ChangeNotifier {
       zIndex: 3,
     );
 
-    clearMarkers();
+    clearRoutes();
     _markers!.add(newMarker);
     _destinationMarker = newMarker;
   }
 
   void updateMarkerPos(LatLng newPos) {
     if (mapAction == MapAction.tripSelected) {
-      clearDestinationAddress();
-      _destinationLocation = newPos;
       _markers!.remove(_destinationMarker);
       _destinationMarker = _destinationMarker!.copyWith(positionParam: newPos);
       _markers!.add(_destinationMarker!);
@@ -202,17 +211,9 @@ class MapProvider with ChangeNotifier {
       draggableParam: false,
     );
     _markers!.add(_destinationMarker!);
-    notifyListeners();
   }
 
-  void removeMarker() {
-    _markers!.remove(_destinationMarker);
-    _destinationMarker = null;
-    _polylines!.clear();
-    notifyListeners();
-  }
-
-  void clearMarkers() {
+  void clearRoutes() {
     _markers!.clear();
     _polylines!.clear();
     _destinationMarker = null;
@@ -253,23 +254,6 @@ class MapProvider with ChangeNotifier {
         ),
       );
     }
-
-    if (shouldUpdate) notifyListeners();
-  }
-
-  void setDeviceLocation(Position location) {
-    _deviceLocation = location;
-  }
-
-  void setDeviceLocationAddress(double latitude, double longitude) {
-    placemarkFromCoordinates(latitude, longitude)
-        .then((List<Placemark> places) {
-      _deviceAddress = places[2].name;
-
-      if (kDebugMode) {
-        print(places[2].toString());
-      }
-    });
   }
 
   void setDestinationAddress(LatLng pos) {
@@ -279,7 +263,6 @@ class MapProvider with ChangeNotifier {
       placemarkFromCoordinates(pos.latitude, pos.longitude)
           .then((List<Placemark> places) {
         _destinationAddress = places[2].name;
-        notifyListeners();
 
         if (kDebugMode) {
           print(places[2].toString());
@@ -311,7 +294,6 @@ class MapProvider with ChangeNotifier {
 
   void changeMapAction(MapAction mapAction) {
     _mapAction = mapAction;
-    notifyListeners();
   }
 
   void setCurrentTripId(String id) {
@@ -320,10 +302,9 @@ class MapProvider with ChangeNotifier {
 
   void cancelTrip() {
     resetMapAction();
-    clearMarkers();
+    clearRoutes();
     _cost = null;
     _distance = null;
     _dbService.cancelTrip(_currentTripId!);
-    notifyListeners();
   }
 }
