@@ -27,7 +27,6 @@ class ConfirmPickup extends StatelessWidget {
     String tripId = await dbService.startTrip(newTrip);
     mapProvider!.toggleMarkerOption();
     mapProvider!.changeMapAction(MapAction.searchDriver);
-    mapProvider!.setCurrentTripId(tripId);
   }
 
   @override
@@ -63,10 +62,10 @@ class ConfirmPickup extends StatelessWidget {
                           Text(
                             'Distance: ${mapProvider!.distance!.toStringAsFixed(2)} km',
                           ),
-                        if (mapProvider!.cost != null)
-                          Text(
-                            'Trip will cost: \$${mapProvider!.cost!.toStringAsFixed(2)}',
-                          ),
+                        // if (mapProvider!.cost != null)
+                        //   Text(
+                        //     'Trip will cost: \$${mapProvider!.cost!.toStringAsFixed(2)}',
+                        //   ),
                         const SizedBox(height: 5),
                       ],
                     )

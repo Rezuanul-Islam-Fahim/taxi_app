@@ -9,12 +9,10 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 import '../constant.dart';
 import '../models/map_action.dart';
-import '../services/database_service.dart';
 import '../services/location_service.dart';
 
 class MapProvider with ChangeNotifier {
   final LocationService _locationService = LocationService();
-  final DatabaseService _dbService = DatabaseService();
   late GoogleMapController? _controller;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
@@ -28,7 +26,6 @@ class MapProvider with ChangeNotifier {
   late LatLng? _destinationLocation;
   late Position? _deviceLocation;
   late CameraPosition? _cameraPos;
-  late String? _currentTripId;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -43,7 +40,6 @@ class MapProvider with ChangeNotifier {
   Set<Polyline>? get polylines => _polylines;
   double? get cost => _cost;
   double? get distance => _distance;
-  String? get currentTripId => _currentTripId;
 
   MapProvider() {
     _mapAction = MapAction.selectTrip;
@@ -54,7 +50,6 @@ class MapProvider with ChangeNotifier {
     _cost = null;
     _distance = null;
     _cameraPos = null;
-    _currentTripId = null;
     _markers = {};
     _polylines = {};
     setCustomPin();
@@ -153,7 +148,7 @@ class MapProvider with ChangeNotifier {
 
         if (_deviceLocation != null) {
           await setPolyline(pos);
-          calculateCost(pos);
+          // calculateCost(pos);
         }
 
         notifyListeners();
@@ -209,7 +204,7 @@ class MapProvider with ChangeNotifier {
 
         if (_deviceLocation != null) {
           await setPolyline(newPos);
-          calculateCost(newPos);
+          // calculateCost(newPos);
         }
 
         notifyListeners();
@@ -223,15 +218,6 @@ class MapProvider with ChangeNotifier {
       draggableParam: false,
     );
     _markers!.add(_destinationMarker!);
-  }
-
-  void clearRoutes() {
-    _markers!.clear();
-    _polylines!.clear();
-    _destinationMarker = null;
-    _distance = null;
-    _cost = null;
-    clearDestinationAddress();
   }
 
   Future<void> setPolyline(
@@ -284,22 +270,31 @@ class MapProvider with ChangeNotifier {
     }
   }
 
+  void clearRoutes() {
+    _markers!.clear();
+    _polylines!.clear();
+    _destinationMarker = null;
+    _distance = null;
+    _cost = null;
+    clearDestinationAddress();
+  }
+
   void clearDestinationAddress() {
     _destinationAddress = null;
     _destinationLocation = null;
   }
 
-  void calculateCost(LatLng destinationPos) {
-    _distance = Geolocator.distanceBetween(
-          _deviceLocation!.latitude,
-          _deviceLocation!.longitude,
-          destinationPos.latitude,
-          destinationPos.longitude,
-        ) /
-        1000;
+  // void calculateCost(LatLng destinationPos) {
+  //   _distance = Geolocator.distanceBetween(
+  //         _deviceLocation!.latitude,
+  //         _deviceLocation!.longitude,
+  //         destinationPos.latitude,
+  //         destinationPos.longitude,
+  //       ) /
+  //       1000;
 
-    _cost = _distance! * 0.8;
-  }
+  //   _cost = _distance! * 0.8;
+  // }
 
   void resetMapAction() {
     _mapAction = MapAction.selectTrip;
@@ -309,15 +304,10 @@ class MapProvider with ChangeNotifier {
     _mapAction = mapAction;
   }
 
-  void setCurrentTripId(String id) {
-    _currentTripId = id;
-  }
-
   void cancelTrip() {
     resetMapAction();
     clearRoutes();
-    _cost = null;
-    _distance = null;
-    _dbService.cancelTrip(_currentTripId!);
+
+    notifyListeners();
   }
 }
