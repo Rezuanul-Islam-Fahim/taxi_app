@@ -1,19 +1,26 @@
 class Trip {
   String? id;
-  final String? pickupAddress;
-  final String? destinationAddress;
-  final double? pickupLatitude;
-  final double? pickupLongitude;
-  final double? destinationLatitude;
-  final double? destinationLongitude;
-  final double? distance;
-  final double? cost;
-  final bool? accepted;
-  final bool? started;
-  final bool? canceled;
+  String? passengerId;
+  String? driverId;
+  String? pickupAddress;
+  String? destinationAddress;
+  double? pickupLatitude;
+  double? pickupLongitude;
+  double? destinationLatitude;
+  double? destinationLongitude;
+  double? distance;
+  double? cost;
+  bool? accepted;
+  bool? started;
+  bool? canceled;
+  bool? arrived;
+  bool? reachedDestination;
+  bool? tripCompleted;
 
   Trip({
     this.id,
+    this.passengerId,
+    this.driverId,
     this.pickupAddress,
     this.destinationAddress,
     this.pickupLatitude,
@@ -23,12 +30,17 @@ class Trip {
     this.distance,
     this.cost,
     this.accepted = false,
-    this.started = false,
+    this.started,
     this.canceled = false,
+    this.arrived,
+    this.reachedDestination,
+    this.tripCompleted,
   });
 
   factory Trip.fromJson(Map<String, dynamic> data) => Trip(
         id: data['id'],
+        passengerId: data['passengerId'],
+        driverId: data['driverId'],
         pickupAddress: data['pickupAddress'],
         destinationAddress: data['destinationAddress'],
         pickupLatitude: data['pickupLatitude'],
@@ -40,22 +52,38 @@ class Trip {
         accepted: data['accepted'],
         started: data['started'],
         canceled: data['canceled'],
+        arrived: data['arrived'],
+        reachedDestination: data['reachedDestination'],
+        tripCompleted: data['tripCompleted'],
       );
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'pickupAddress': pickupAddress,
-      'destinationAddress': destinationAddress,
-      'pickupLatitude': pickupLatitude,
-      'pickupLongitude': pickupLongitude,
-      'destinationLatitude': destinationLatitude,
-      'destinationLongitude': destinationLongitude,
-      'distance': distance,
-      'cost': cost,
-      'accepted': accepted,
-      'started': started,
-      'canceled': canceled,
-    };
+    Map<String, dynamic> data = {};
+
+    void addNonNull(String key, dynamic value) {
+      if (value != null) {
+        data[key] = value;
+      }
+    }
+
+    addNonNull('id', id);
+    addNonNull('passengerId', passengerId);
+    addNonNull('driverId', driverId);
+    addNonNull('pickupAddress', pickupAddress);
+    addNonNull('destinationAddress', destinationAddress);
+    addNonNull('pickupLatitude', pickupLatitude);
+    addNonNull('pickupLongitude', pickupLongitude);
+    addNonNull('destinationLatitude', destinationLatitude);
+    addNonNull('destinationLongitude', destinationLongitude);
+    addNonNull('distance', distance);
+    addNonNull('cost', cost);
+    addNonNull('accepted', accepted);
+    addNonNull('started', started);
+    addNonNull('canceled', canceled);
+    addNonNull('arrived', arrived);
+    addNonNull('reachedDestination', reachedDestination);
+    addNonNull('tripCompleted', tripCompleted);
+
+    return data;
   }
 }
