@@ -27,7 +27,8 @@ class ConfirmPickup extends StatelessWidget {
     );
 
     String tripId = await dbService.startTrip(newTrip);
-    mapProvider!.confirmTrip();
+    newTrip.id = tripId;
+    mapProvider!.confirmTrip(newTrip);
   }
 
   @override

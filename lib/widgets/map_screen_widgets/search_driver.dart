@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../models/map_action.dart';
+import '../../models/trip_model.dart';
 import '../../providers/map_provider.dart';
+import '../../services/database_service.dart';
 
 class SearchDriver extends StatelessWidget {
   const SearchDriver({
@@ -11,6 +13,14 @@ class SearchDriver extends StatelessWidget {
   }) : super(key: key);
 
   final MapProvider? mapProvider;
+
+  void _cancelTrip() {
+    final DatabaseService dbService = DatabaseService();
+    Trip ongoingTrip = mapProvider!.ongoingTrip!;
+    ongoingTrip.canceled = true;
+    dbService.updateTrip(ongoingTrip);
+    mapProvider!.cancelTrip();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +58,7 @@ class SearchDriver extends StatelessWidget {
                     primary: Colors.grey[300],
                     padding: const EdgeInsets.all(15),
                   ),
-                  onPressed: () => mapProvider!.cancelTrip(),
+                  onPressed: _cancelTrip,
                   child: const Text(
                     'CANCEL',
                     style: TextStyle(color: Colors.black54),

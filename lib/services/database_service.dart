@@ -15,10 +15,10 @@ class DatabaseService {
     trip.id = docId;
     await _firestore.collection('trips').doc(docId).set(trip.toMap());
 
-    return docId;
+    return trip.id!;
   }
 
-  Future<void> cancelTrip(String tripId) async {
-    _firestore.collection('trips').doc(tripId).update({'canceled': true});
+  Future<void> updateTrip(Trip trip) async {
+    await _firestore.collection('trips').doc(trip.id).update(trip.toMap());
   }
 }

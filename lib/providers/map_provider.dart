@@ -9,6 +9,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 import '../constant.dart';
 import '../models/map_action.dart';
+import '../models/trip_model.dart';
 import '../services/location_service.dart';
 
 class MapProvider with ChangeNotifier {
@@ -26,6 +27,7 @@ class MapProvider with ChangeNotifier {
   late LatLng? _destinationLocation;
   late Position? _deviceLocation;
   late CameraPosition? _cameraPos;
+  late Trip? _ongoingTrip;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -40,6 +42,7 @@ class MapProvider with ChangeNotifier {
   Set<Polyline>? get polylines => _polylines;
   double? get cost => _cost;
   double? get distance => _distance;
+  Trip? get ongoingTrip => _ongoingTrip;
 
   MapProvider() {
     _mapAction = MapAction.selectTrip;
@@ -52,6 +55,7 @@ class MapProvider with ChangeNotifier {
     _cameraPos = null;
     _markers = {};
     _polylines = {};
+    _ongoingTrip = null;
     setCustomPin();
 
     if (kDebugMode) {
@@ -311,9 +315,14 @@ class MapProvider with ChangeNotifier {
     _mapAction = mapAction;
   }
 
-  void confirmTrip() {
+  void setOngoingTrip(Trip trip) {
+    _ongoingTrip = trip;
+  }
+
+  void confirmTrip(Trip trip) {
     changeMapAction(MapAction.searchDriver);
     toggleMarkerDraggable();
+    setOngoingTrip(trip);
 
     notifyListeners();
   }
@@ -321,6 +330,7 @@ class MapProvider with ChangeNotifier {
   void cancelTrip() {
     resetMapAction();
     clearRoutes();
+    _ongoingTrip = null;
 
     notifyListeners();
   }
