@@ -63,10 +63,10 @@ class ConfirmPickup extends StatelessWidget {
                           Text(
                             'Distance: ${mapProvider!.distance!.toStringAsFixed(2)} km',
                           ),
-                        // if (mapProvider!.cost != null)
-                        //   Text(
-                        //     'Trip will cost: \$${mapProvider!.cost!.toStringAsFixed(2)}',
-                        //   ),
+                        if (mapProvider!.cost != null)
+                          Text(
+                            'Trip will cost: \$${mapProvider!.cost!.toStringAsFixed(2)}',
+                          ),
                         const SizedBox(height: 5),
                       ],
                     )

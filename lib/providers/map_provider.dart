@@ -147,7 +147,8 @@ class MapProvider with ChangeNotifier {
         await setDestinationAddress(pos);
 
         if (_deviceLocation != null) {
-          await setPolyline(pos);
+          PolylineResult polylineResult = await setPolyline(pos);
+          calculateDistanceCost(polylineResult.points);
           // calculateCost(pos);
         }
 
@@ -220,7 +221,7 @@ class MapProvider with ChangeNotifier {
     _markers!.add(_destinationMarker!);
   }
 
-  Future<void> setPolyline(
+  Future<PolylineResult> setPolyline(
     LatLng destinationPoint, {
     bool shouldUpdate = false,
   }) async {
@@ -254,6 +255,8 @@ class MapProvider with ChangeNotifier {
         ),
       );
     }
+
+    return result;
   }
 
   Future<void> setDestinationAddress(LatLng pos) async {
@@ -270,6 +273,22 @@ class MapProvider with ChangeNotifier {
     }
   }
 
+  void calculateDistanceCost(List<PointLatLng> points) {
+    double distance = 0;
+
+    for (int i = 0; i < points.length - 1; i++) {
+      distance += Geolocator.distanceBetween(
+        points[i].latitude,
+        points[i].longitude,
+        points[i + 1].latitude,
+        points[i + 1].longitude,
+      );
+    }
+
+    _distance = distance / 1000;
+    _cost = _distance! * 0.75;
+  }
+
   void clearRoutes() {
     _markers!.clear();
     _polylines!.clear();
@@ -283,18 +302,6 @@ class MapProvider with ChangeNotifier {
     _destinationAddress = null;
     _destinationLocation = null;
   }
-
-  // void calculateCost(LatLng destinationPos) {
-  //   _distance = Geolocator.distanceBetween(
-  //         _deviceLocation!.latitude,
-  //         _deviceLocation!.longitude,
-  //         destinationPos.latitude,
-  //         destinationPos.longitude,
-  //       ) /
-  //       1000;
-
-  //   _cost = _distance! * 0.8;
-  // }
 
   void resetMapAction() {
     _mapAction = MapAction.selectTrip;
