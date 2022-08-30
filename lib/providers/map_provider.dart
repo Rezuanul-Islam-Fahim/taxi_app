@@ -12,10 +12,12 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import '../constant.dart';
 import '../models/map_action.dart';
 import '../models/trip_model.dart';
+import '../services/database_service.dart';
 import '../services/location_service.dart';
 
 class MapProvider with ChangeNotifier {
   final LocationService _locationService = LocationService();
+  final DatabaseService _dbService = DatabaseService();
   late GoogleMapController? _controller;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
@@ -31,6 +33,7 @@ class MapProvider with ChangeNotifier {
   late CameraPosition? _cameraPos;
   late Trip? _ongoingTrip;
   late Timer? _tripCancelTimer;
+  late StreamSubscription<Trip>? _tripStream;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -47,6 +50,7 @@ class MapProvider with ChangeNotifier {
   double? get distance => _distance;
   Trip? get ongoingTrip => _ongoingTrip;
   Timer? get tripCancelTimer => _tripCancelTimer;
+  StreamSubscription<Trip>? get tripStream => _tripStream;
 
   MapProvider() {
     _mapAction = MapAction.selectTrip;
@@ -61,6 +65,7 @@ class MapProvider with ChangeNotifier {
     _polylines = {};
     _ongoingTrip = null;
     _tripCancelTimer = null;
+    _tripStream = null;
     setCustomPin();
 
     if (kDebugMode) {
@@ -323,6 +328,14 @@ class MapProvider with ChangeNotifier {
     _ongoingTrip = trip;
   }
 
+  void startListeningToTrip() {
+    _tripStream = _dbService.getTrip$(ongoingTrip!).listen((Trip trip) {
+      if (kDebugMode) {
+        print(trip.toMap());
+      }
+    });
+  }
+
   void triggerAutoCancelTrip({
     VoidCallback? tripDeleteHandler,
     VoidCallback? snackbarHandler,
@@ -346,6 +359,7 @@ class MapProvider with ChangeNotifier {
     changeMapAction(MapAction.searchDriver);
     toggleMarkerDraggable();
     setOngoingTrip(trip);
+    startListeningToTrip();
 
     notifyListeners();
   }

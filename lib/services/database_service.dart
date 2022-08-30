@@ -21,4 +21,11 @@ class DatabaseService {
   Future<void> updateTrip(Trip trip) async {
     await _firestore.collection('trips').doc(trip.id).update(trip.toMap());
   }
+
+  Stream<Trip> getTrip$(Trip trip) {
+    return _firestore.collection('trips').doc(trip.id).snapshots().map(
+          (DocumentSnapshot snapshot) =>
+              Trip.fromJson(snapshot.data() as Map<String, dynamic>),
+        );
+  }
 }
