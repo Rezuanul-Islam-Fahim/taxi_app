@@ -333,7 +333,7 @@ class MapProvider with ChangeNotifier {
     }
 
     _tripCancelTimer = Timer(
-      const Duration(seconds: 10),
+      const Duration(seconds: 100),
       () {
         tripDeleteHandler!();
         cancelTrip();
