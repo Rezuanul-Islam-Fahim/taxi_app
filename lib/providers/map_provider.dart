@@ -153,7 +153,6 @@ class MapProvider with ChangeNotifier {
         if (_deviceLocation != null) {
           PolylineResult polylineResult = await setPolyline(pos);
           calculateDistanceCost(polylineResult.points);
-          // calculateCost(pos);
         }
 
         notifyListeners();
@@ -208,8 +207,8 @@ class MapProvider with ChangeNotifier {
         await setDestinationAddress(newPos);
 
         if (_deviceLocation != null) {
-          await setPolyline(newPos);
-          // calculateCost(newPos);
+          PolylineResult polylineResult = await setPolyline(newPos);
+          calculateDistanceCost(polylineResult.points);
         }
 
         notifyListeners();
