@@ -38,7 +38,7 @@ class ConfirmPickup extends StatelessWidget {
       snackbarHandler: () {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Trip not accepted by any driver'),
+            content: Text('Trip is not accepted by any driver'),
           ),
         );
       },

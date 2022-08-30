@@ -303,6 +303,12 @@ class MapProvider with ChangeNotifier {
   }
 
   void clearRoutes() {
+    if (kDebugMode) {
+      print(
+        '======== Clear routes (markers, polylines, destination data, etc....) ========',
+      );
+    }
+
     _markers!.clear();
     _polylines!.clear();
     _destinationMarker = null;
@@ -329,6 +335,10 @@ class MapProvider with ChangeNotifier {
   }
 
   void startListeningToTrip() {
+    if (kDebugMode) {
+      print('======== Start litening to trip stream ========');
+    }
+
     _tripStream = _dbService.getTrip$(ongoingTrip!).listen((Trip trip) {
       if (kDebugMode) {
         print(trip.toMap());
@@ -337,14 +347,24 @@ class MapProvider with ChangeNotifier {
   }
 
   void stopListeningToTrip() {
-    _tripStream!.cancel();
-    _tripStream = null;
+    if (kDebugMode) {
+      print('======== Stop litening to trip stream ========');
+    }
+
+    if (_tripStream != null) {
+      _tripStream!.cancel();
+      _tripStream = null;
+    }
   }
 
   void triggerAutoCancelTrip({
     VoidCallback? tripDeleteHandler,
     VoidCallback? snackbarHandler,
   }) {
+    if (kDebugMode) {
+      print('======= Set auto cancel trip timer to 100 seconds =======');
+    }
+
     if (_tripCancelTimer != null) {
       _tripCancelTimer!.cancel();
       _tripCancelTimer = null;
@@ -373,9 +393,7 @@ class MapProvider with ChangeNotifier {
     resetMapAction();
     clearRoutes();
     _ongoingTrip = null;
-    if (_tripStream != null) {
-      stopListeningToTrip();
-    }
+    stopListeningToTrip();
 
     notifyListeners();
   }
