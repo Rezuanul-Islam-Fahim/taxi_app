@@ -323,17 +323,21 @@ class MapProvider with ChangeNotifier {
     _ongoingTrip = trip;
   }
 
-  void triggerAutoCancelTrip(VoidCallback handler) {
+  void triggerAutoCancelTrip({
+    VoidCallback? tripDeleteHandler,
+    VoidCallback? snackbarHandler,
+  }) {
     if (_tripCancelTimer != null) {
       _tripCancelTimer!.cancel();
       _tripCancelTimer = null;
     }
 
     _tripCancelTimer = Timer(
-      const Duration(seconds: 100),
+      const Duration(seconds: 10),
       () {
-        handler();
+        tripDeleteHandler!();
         cancelTrip();
+        snackbarHandler!();
       },
     );
   }

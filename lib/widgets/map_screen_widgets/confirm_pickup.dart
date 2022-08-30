@@ -11,7 +11,7 @@ class ConfirmPickup extends StatelessWidget {
 
   final MapProvider? mapProvider;
 
-  Future<void> _startTrip() async {
+  Future<void> _startTrip(BuildContext context) async {
     final DatabaseService dbService = DatabaseService();
 
     Trip newTrip = Trip(
@@ -30,10 +30,19 @@ class ConfirmPickup extends StatelessWidget {
     newTrip.id = tripId;
     mapProvider!.confirmTrip(newTrip);
 
-    mapProvider!.triggerAutoCancelTrip(() {
-      newTrip.canceled = true;
-      dbService.updateTrip(newTrip);
-    });
+    mapProvider!.triggerAutoCancelTrip(
+      tripDeleteHandler: () {
+        newTrip.canceled = true;
+        dbService.updateTrip(newTrip);
+      },
+      snackbarHandler: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Trip not accepted by any driver'),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -93,7 +102,7 @@ class ConfirmPickup extends StatelessWidget {
                     primary: Colors.black,
                     padding: const EdgeInsets.all(15),
                   ),
-                  onPressed: _startTrip,
+                  onPressed: () => _startTrip(context),
                   child: const Text('CONFIRM PICKUP'),
                 ),
               ),
