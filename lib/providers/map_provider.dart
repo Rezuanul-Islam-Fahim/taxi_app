@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -28,6 +30,7 @@ class MapProvider with ChangeNotifier {
   late Position? _deviceLocation;
   late CameraPosition? _cameraPos;
   late Trip? _ongoingTrip;
+  late Timer? _tripCancelTimer;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -43,6 +46,7 @@ class MapProvider with ChangeNotifier {
   double? get cost => _cost;
   double? get distance => _distance;
   Trip? get ongoingTrip => _ongoingTrip;
+  Timer? get tripCancelTimer => _tripCancelTimer;
 
   MapProvider() {
     _mapAction = MapAction.selectTrip;
@@ -56,6 +60,7 @@ class MapProvider with ChangeNotifier {
     _markers = {};
     _polylines = {};
     _ongoingTrip = null;
+    _tripCancelTimer = null;
     setCustomPin();
 
     if (kDebugMode) {
@@ -318,10 +323,23 @@ class MapProvider with ChangeNotifier {
     _ongoingTrip = trip;
   }
 
+  void triggerAutoCancelTrip() {
+    if (_tripCancelTimer != null) {
+      _tripCancelTimer!.cancel();
+      _tripCancelTimer = null;
+    }
+
+    _tripCancelTimer = Timer(
+      const Duration(seconds: 100),
+      () => cancelTrip(),
+    );
+  }
+
   void confirmTrip(Trip trip) {
     changeMapAction(MapAction.searchDriver);
     toggleMarkerDraggable();
     setOngoingTrip(trip);
+    triggerAutoCancelTrip();
 
     notifyListeners();
   }
