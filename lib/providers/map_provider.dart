@@ -323,7 +323,7 @@ class MapProvider with ChangeNotifier {
     _ongoingTrip = trip;
   }
 
-  void triggerAutoCancelTrip() {
+  void triggerAutoCancelTrip(VoidCallback handler) {
     if (_tripCancelTimer != null) {
       _tripCancelTimer!.cancel();
       _tripCancelTimer = null;
@@ -331,7 +331,10 @@ class MapProvider with ChangeNotifier {
 
     _tripCancelTimer = Timer(
       const Duration(seconds: 100),
-      () => cancelTrip(),
+      () {
+        handler();
+        cancelTrip();
+      },
     );
   }
 
@@ -339,7 +342,6 @@ class MapProvider with ChangeNotifier {
     changeMapAction(MapAction.searchDriver);
     toggleMarkerDraggable();
     setOngoingTrip(trip);
-    triggerAutoCancelTrip();
 
     notifyListeners();
   }
