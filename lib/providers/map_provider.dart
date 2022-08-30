@@ -336,6 +336,11 @@ class MapProvider with ChangeNotifier {
     });
   }
 
+  void stopListeningToTrip() {
+    _tripStream!.cancel();
+    _tripStream = null;
+  }
+
   void triggerAutoCancelTrip({
     VoidCallback? tripDeleteHandler,
     VoidCallback? snackbarHandler,
@@ -368,6 +373,9 @@ class MapProvider with ChangeNotifier {
     resetMapAction();
     clearRoutes();
     _ongoingTrip = null;
+    if (_tripStream != null) {
+      stopListeningToTrip();
+    }
 
     notifyListeners();
   }
