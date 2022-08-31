@@ -347,11 +347,11 @@ class MapProvider with ChangeNotifier {
   }
 
   void stopListeningToTrip() {
-    if (kDebugMode) {
-      print('======== Stop litening to trip stream ========');
-    }
-
     if (_tripStream != null) {
+      if (kDebugMode) {
+        print('======== Stop litening to trip stream ========');
+      }
+
       _tripStream!.cancel();
       _tripStream = null;
     }
@@ -361,23 +361,31 @@ class MapProvider with ChangeNotifier {
     VoidCallback? tripDeleteHandler,
     VoidCallback? snackbarHandler,
   }) {
+    stopAutoCancelTimer();
+
     if (kDebugMode) {
       print('======= Set auto cancel trip timer to 100 seconds =======');
     }
 
-    if (_tripCancelTimer != null) {
-      _tripCancelTimer!.cancel();
-      _tripCancelTimer = null;
-    }
-
     _tripCancelTimer = Timer(
-      const Duration(seconds: 100),
+      const Duration(seconds: 10),
       () {
         tripDeleteHandler!();
         cancelTrip();
         snackbarHandler!();
       },
     );
+  }
+
+  void stopAutoCancelTimer() {
+    if (_tripCancelTimer != null) {
+      if (kDebugMode) {
+        print('======= Auto cancel timer stopped =======');
+      }
+
+      _tripCancelTimer!.cancel();
+      _tripCancelTimer = null;
+    }
   }
 
   void confirmTrip(Trip trip) {
@@ -394,6 +402,7 @@ class MapProvider with ChangeNotifier {
     clearRoutes();
     _ongoingTrip = null;
     stopListeningToTrip();
+    stopAutoCancelTimer();
 
     notifyListeners();
   }
