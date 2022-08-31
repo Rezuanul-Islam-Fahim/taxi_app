@@ -12,6 +12,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import '../constant.dart';
 import '../models/map_action.dart';
 import '../models/trip_model.dart';
+import '../models/user_model.dart';
 import '../services/database_service.dart';
 import '../services/location_service.dart';
 
@@ -34,6 +35,7 @@ class MapProvider with ChangeNotifier {
   late Trip? _ongoingTrip;
   late Timer? _tripCancelTimer;
   late StreamSubscription<Trip>? _tripStream;
+  late StreamSubscription<User>? _driverStream;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -51,6 +53,7 @@ class MapProvider with ChangeNotifier {
   Trip? get ongoingTrip => _ongoingTrip;
   Timer? get tripCancelTimer => _tripCancelTimer;
   StreamSubscription<Trip>? get tripStream => _tripStream;
+  StreamSubscription<User>? get driverStream => _driverStream;
 
   MapProvider() {
     _mapAction = MapAction.selectTrip;
@@ -66,6 +69,7 @@ class MapProvider with ChangeNotifier {
     _ongoingTrip = null;
     _tripCancelTimer = null;
     _tripStream = null;
+    _driverStream = null;
     setCustomPin();
 
     if (kDebugMode) {
@@ -334,9 +338,20 @@ class MapProvider with ChangeNotifier {
     _ongoingTrip = trip;
   }
 
+  void startListeningToDriver() {
+    _driverStream = _dbService.getDriver$(ongoingTrip!.driverId!).listen(
+      (User driver) {
+        if (kDebugMode) {
+          print(driver.toMap());
+        }
+      },
+    );
+  }
+
   void triggerDriverArriving() {
     changeMapAction(MapAction.driverArriving);
     stopAutoCancelTimer();
+    startListeningToDriver();
 
     notifyListeners();
   }
