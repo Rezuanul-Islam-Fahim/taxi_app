@@ -334,6 +334,13 @@ class MapProvider with ChangeNotifier {
     _ongoingTrip = trip;
   }
 
+  void triggerDriverArriving() {
+    changeMapAction(MapAction.driverArriving);
+    stopAutoCancelTimer();
+
+    notifyListeners();
+  }
+
   void startListeningToTrip() {
     if (kDebugMode) {
       print('======== Start litening to trip stream ========');
@@ -341,8 +348,13 @@ class MapProvider with ChangeNotifier {
 
     _tripStream = _dbService.getTrip$(ongoingTrip!).listen((Trip trip) {
       if (kDebugMode) {
+        print('========///========///========');
         print(trip.toMap());
+        print('====///====///====///====///====');
       }
+      setOngoingTrip(trip);
+
+      if (trip.accepted!) triggerDriverArriving();
     });
   }
 
@@ -368,7 +380,7 @@ class MapProvider with ChangeNotifier {
     }
 
     _tripCancelTimer = Timer(
-      const Duration(seconds: 10),
+      const Duration(seconds: 100),
       () {
         tripDeleteHandler!();
         cancelTrip();
