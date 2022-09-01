@@ -352,7 +352,7 @@ class MapProvider with ChangeNotifier {
   }
 
   void startListeningToDriver() {
-    _driverStream = _dbService.getDriver$(ongoingTrip!.driverId!).listen(
+    _driverStream = _dbService.getDriver$(_ongoingTrip!.driverId!).listen(
       (User driver) async {
         if (kDebugMode) {
           print(driver.toMap());
@@ -403,12 +403,44 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> triggerTripStarted() async {
+    clearRoutes(false);
+    changeMapAction(MapAction.tripStarted);
+    addMarker(
+      LatLng(
+        _ongoingTrip!.destinationLatitude!,
+        _ongoingTrip!.destinationLongitude!,
+      ),
+      _selectionPin!,
+      isDraggable: false,
+    );
+
+    await setRemoteAddress(
+      LatLng(
+        _ongoingTrip!.destinationLatitude!,
+        _ongoingTrip!.destinationLongitude!,
+      ),
+    );
+
+    if (_deviceLocation != null) {
+      PolylineResult polylineResult = await setPolyline(
+        LatLng(
+          _ongoingTrip!.destinationLatitude!,
+          _ongoingTrip!.destinationLongitude!,
+        ),
+      );
+      calculateDistance(polylineResult.points);
+    }
+
+    notifyListeners();
+  }
+
   void startListeningToTrip() {
     if (kDebugMode) {
       print('======== Start litening to trip stream ========');
     }
 
-    _tripStream = _dbService.getTrip$(ongoingTrip!).listen((Trip trip) {
+    _tripStream = _dbService.getTrip$(_ongoingTrip!).listen((Trip trip) {
       if (kDebugMode) {
         print('========///========///========');
         print(trip.toMap());
@@ -416,7 +448,9 @@ class MapProvider with ChangeNotifier {
       }
       setOngoingTrip(trip);
 
-      if (trip.arrived != null && trip.arrived!) {
+      if (trip.started != null && trip.started!) {
+        triggerTripStarted();
+      } else if (trip.arrived != null && trip.arrived!) {
         triggerDriverArrived();
       } else if (trip.accepted!) {
         triggerDriverArriving();
