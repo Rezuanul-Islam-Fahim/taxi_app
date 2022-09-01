@@ -23,7 +23,8 @@ class MapProvider with ChangeNotifier {
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
   late Marker? _destinationMarker;
-  late BitmapDescriptor? _customPin;
+  late BitmapDescriptor? _selectionPin;
+  late BitmapDescriptor? _carPin;
   late Set<Polyline>? _polylines;
   late double? _cost;
   late String? _remoteAddress;
@@ -42,7 +43,8 @@ class MapProvider with ChangeNotifier {
   Set<Marker>? get markers => _markers;
   Marker? get destinationMarker => _destinationMarker!;
   MapAction? get mapAction => _mapAction;
-  BitmapDescriptor? get customPin => _customPin;
+  BitmapDescriptor? get selectionPin => _selectionPin;
+  BitmapDescriptor? get carPin => _carPin;
   Position? get deviceLocation => _deviceLocation;
   LatLng? get remoteLocation => _remoteLocation;
   String? get remoteAddress => _remoteAddress;
@@ -80,9 +82,13 @@ class MapProvider with ChangeNotifier {
   }
 
   Future<void> setCustomPin() async {
-    _customPin = await BitmapDescriptor.fromAssetImage(
+    _selectionPin = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(devicePixelRatio: 2.5),
       'images/pin.png',
+    );
+    _carPin = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(devicePixelRatio: 2.5),
+      'images/car.png',
     );
   }
 
@@ -158,7 +164,7 @@ class MapProvider with ChangeNotifier {
       }
 
       changeMapAction(MapAction.tripSelected);
-      addMarker(pos);
+      addMarker(pos, _selectionPin!);
       notifyListeners();
 
       Future.delayed(const Duration(milliseconds: 500), () async {
@@ -175,7 +181,11 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  void addMarker(LatLng latLng, {bool isDraggable = true}) {
+  void addMarker(
+    LatLng latLng,
+    BitmapDescriptor pin, {
+    bool isDraggable = true,
+  }) {
     final String markerId = const Uuid().v4();
     final Marker newMarker = Marker(
       markerId: MarkerId(markerId),
@@ -200,7 +210,7 @@ class MapProvider with ChangeNotifier {
         }
         await updateMarkerPos(newPos);
       },
-      icon: _customPin!,
+      icon: pin,
       zIndex: 3,
     );
 
@@ -349,6 +359,7 @@ class MapProvider with ChangeNotifier {
         clearRoutes(false);
         addMarker(
           LatLng(driver.userLatitude!, driver.userLongitude!),
+          _carPin!,
           isDraggable: false,
         );
         notifyListeners();
