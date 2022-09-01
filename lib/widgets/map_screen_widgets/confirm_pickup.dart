@@ -49,7 +49,7 @@ class ConfirmPickup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Visibility(
       visible: mapProvider!.mapAction == MapAction.tripSelected &&
-          mapProvider!.destinationMarker != null,
+          mapProvider!.remoteMarker != null,
       child: Positioned(
         bottom: 15,
         left: 15,

@@ -3,4 +3,5 @@ enum MapAction {
   tripSelected,
   searchDriver,
   driverArriving,
+  driverArrived,
 }

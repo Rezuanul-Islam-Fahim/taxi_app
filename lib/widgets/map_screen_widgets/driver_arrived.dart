@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:taxi_app/models/map_action.dart';
 import 'package:taxi_app/providers/map_provider.dart';
 
-class DriverArriving extends StatelessWidget {
-  const DriverArriving({Key? key, this.mapProvider}) : super(key: key);
+class DriverArrived extends StatelessWidget {
+  const DriverArrived({Key? key, this.mapProvider}) : super(key: key);
 
   final MapProvider? mapProvider;
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: mapProvider!.mapAction == MapAction.driverArriving,
+      visible: mapProvider!.mapAction == MapAction.driverArrived,
       child: Positioned(
         bottom: 15,
         left: 15,
@@ -21,20 +21,24 @@ class DriverArriving extends StatelessWidget {
             color: Colors.white,
           ),
           padding: const EdgeInsets.all(20),
-          child: Row(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Driver Arriving',
+            children: const [
+              Text(
+                'Driver Arrived',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (mapProvider!.distance != null)
-                Text(
-                  'Distance: ${mapProvider!.distance!.toStringAsFixed(2)} Km',
-                )
+              SizedBox(height: 5),
+              Text(
+                'Get to the car fast',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
             ],
           ),
         ),

@@ -22,7 +22,7 @@ class MapProvider with ChangeNotifier {
   late GoogleMapController? _controller;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
-  late Marker? _destinationMarker;
+  late Marker? _remoteMarker;
   late BitmapDescriptor? _selectionPin;
   late BitmapDescriptor? _carPin;
   late Set<Polyline>? _polylines;
@@ -41,7 +41,7 @@ class MapProvider with ChangeNotifier {
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
   Set<Marker>? get markers => _markers;
-  Marker? get destinationMarker => _destinationMarker!;
+  Marker? get remoteMarker => _remoteMarker!;
   MapAction? get mapAction => _mapAction;
   BitmapDescriptor? get selectionPin => _selectionPin;
   BitmapDescriptor? get carPin => _carPin;
@@ -217,17 +217,17 @@ class MapProvider with ChangeNotifier {
     );
 
     _markers!.add(newMarker);
-    _destinationMarker = newMarker;
+    _remoteMarker = newMarker;
   }
 
   Future<void> updateMarkerPos(LatLng newPos) async {
     if (mapAction == MapAction.tripSelected) {
-      Marker marker = _destinationMarker!;
+      Marker marker = _remoteMarker!;
       clearRoutes();
       _markers!.remove(marker);
       marker = marker.copyWith(positionParam: newPos);
       _markers!.add(marker);
-      _destinationMarker = marker;
+      _remoteMarker = marker;
       notifyListeners();
 
       Future.delayed(const Duration(milliseconds: 500), () async {
@@ -245,11 +245,11 @@ class MapProvider with ChangeNotifier {
   }
 
   void toggleMarkerDraggable() {
-    _markers!.remove(_destinationMarker);
-    _destinationMarker = _destinationMarker!.copyWith(
+    _markers!.remove(_remoteMarker);
+    _remoteMarker = _remoteMarker!.copyWith(
       draggableParam: false,
     );
-    _markers!.add(_destinationMarker!);
+    _markers!.add(_remoteMarker!);
   }
 
   Future<PolylineResult> setPolyline(LatLng remotePoint) async {
@@ -326,7 +326,7 @@ class MapProvider with ChangeNotifier {
 
     _markers!.clear();
     _polylines!.clear();
-    _destinationMarker = null;
+    _remoteMarker = null;
     if (shouldClearDistanceCost) {
       _distance = null;
       _cost = null;
@@ -380,10 +380,24 @@ class MapProvider with ChangeNotifier {
     );
   }
 
+  void stopListeningToDriver() {
+    _driverStream!.cancel();
+    _driverStream = null;
+  }
+
   void triggerDriverArriving() {
     changeMapAction(MapAction.driverArriving);
     stopAutoCancelTimer();
     startListeningToDriver();
+    _distance = null;
+
+    notifyListeners();
+  }
+
+  void triggerDriverArrived() {
+    changeMapAction(MapAction.driverArrived);
+    stopListeningToDriver();
+    _polylines!.clear();
     _distance = null;
 
     notifyListeners();
@@ -402,7 +416,11 @@ class MapProvider with ChangeNotifier {
       }
       setOngoingTrip(trip);
 
-      if (trip.accepted!) triggerDriverArriving();
+      if (trip.arrived != null && trip.arrived!) {
+        triggerDriverArrived();
+      } else if (trip.accepted!) {
+        triggerDriverArriving();
+      }
     });
   }
 
