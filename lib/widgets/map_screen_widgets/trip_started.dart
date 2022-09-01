@@ -28,12 +28,12 @@ class TripStarted extends StatelessWidget {
                 child: Text(
                   'Trip Started',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 6),
               if (mapProvider!.remoteAddress != null)
                 Column(
                   children: [
