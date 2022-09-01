@@ -26,12 +26,22 @@ class User {
     );
   }
 
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'username': username,
-        'email': email,
-        'userType': userType,
-        'userLatitude': userLatitude,
-        'userLongitude': userLongitude,
-      };
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> data = {};
+
+    void addNonNull(String key, dynamic value) {
+      if (value != null) {
+        data[key] = value;
+      }
+    }
+
+    addNonNull('id', id);
+    addNonNull('username', username);
+    addNonNull('email', email);
+    addNonNull('userType', userType);
+    addNonNull('userLatitude', userLatitude);
+    addNonNull('userLongitude', userLongitude);
+
+    return data;
+  }
 }
