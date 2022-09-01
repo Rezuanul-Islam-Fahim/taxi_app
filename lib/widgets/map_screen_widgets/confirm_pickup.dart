@@ -16,11 +16,11 @@ class ConfirmPickup extends StatelessWidget {
 
     Trip newTrip = Trip(
       pickupAddress: mapProvider!.deviceAddress,
-      destinationAddress: mapProvider!.destinationAddress,
+      destinationAddress: mapProvider!.remoteAddress,
       pickupLatitude: mapProvider!.deviceLocation!.latitude,
       pickupLongitude: mapProvider!.deviceLocation!.longitude,
-      destinationLatitude: mapProvider!.destinationLocation!.latitude,
-      destinationLongitude: mapProvider!.destinationLocation!.longitude,
+      destinationLatitude: mapProvider!.remoteLocation!.latitude,
+      destinationLongitude: mapProvider!.remoteLocation!.longitude,
       distance: mapProvider!.distance,
       cost: mapProvider!.cost,
       passengerId: FirebaseAuth.instance.currentUser!.uid,
@@ -62,12 +62,12 @@ class ConfirmPickup extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: Column(
             children: [
-              mapProvider!.destinationLocation != null
+              mapProvider!.remoteLocation != null
                   ? Column(
                       children: [
-                        if (mapProvider!.destinationAddress != null)
+                        if (mapProvider!.remoteAddress != null)
                           Text(
-                            mapProvider!.destinationAddress!,
+                            mapProvider!.remoteAddress!,
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,

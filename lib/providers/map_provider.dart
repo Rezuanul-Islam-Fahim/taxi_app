@@ -26,10 +26,10 @@ class MapProvider with ChangeNotifier {
   late BitmapDescriptor? _customPin;
   late Set<Polyline>? _polylines;
   late double? _cost;
-  late String? _destinationAddress;
+  late String? _remoteAddress;
   late String? _deviceAddress;
   late double? _distance;
-  late LatLng? _destinationLocation;
+  late LatLng? _remoteLocation;
   late Position? _deviceLocation;
   late CameraPosition? _cameraPos;
   late Trip? _ongoingTrip;
@@ -44,8 +44,8 @@ class MapProvider with ChangeNotifier {
   MapAction? get mapAction => _mapAction;
   BitmapDescriptor? get customPin => _customPin;
   Position? get deviceLocation => _deviceLocation;
-  LatLng? get destinationLocation => _destinationLocation;
-  String? get destinationAddress => _destinationAddress;
+  LatLng? get remoteLocation => _remoteLocation;
+  String? get remoteAddress => _remoteAddress;
   String? get deviceAddress => _deviceAddress;
   Set<Polyline>? get polylines => _polylines;
   double? get cost => _cost;
@@ -58,8 +58,8 @@ class MapProvider with ChangeNotifier {
   MapProvider() {
     _mapAction = MapAction.selectTrip;
     _deviceLocation = null;
-    _destinationLocation = null;
-    _destinationAddress = null;
+    _remoteLocation = null;
+    _remoteAddress = null;
     _deviceAddress = null;
     _cost = null;
     _distance = null;
@@ -162,11 +162,12 @@ class MapProvider with ChangeNotifier {
       notifyListeners();
 
       Future.delayed(const Duration(milliseconds: 500), () async {
-        await setDestinationAddress(pos);
+        await setRemoteAddress(pos);
 
         if (_deviceLocation != null) {
           PolylineResult polylineResult = await setPolyline(pos);
-          calculateDistanceCost(polylineResult.points);
+          calculateDistance(polylineResult.points);
+          calculateCost();
         }
 
         notifyListeners();
@@ -174,12 +175,12 @@ class MapProvider with ChangeNotifier {
     }
   }
 
-  void addMarker(LatLng latLng) {
+  void addMarker(LatLng latLng, {bool isDraggable = true}) {
     final String markerId = const Uuid().v4();
     final Marker newMarker = Marker(
       markerId: MarkerId(markerId),
       position: latLng,
-      draggable: true,
+      draggable: isDraggable,
       onDrag: (v) {
         if (kDebugMode) {
           print('========Drag====');
@@ -218,11 +219,12 @@ class MapProvider with ChangeNotifier {
       notifyListeners();
 
       Future.delayed(const Duration(milliseconds: 500), () async {
-        await setDestinationAddress(newPos);
+        await setRemoteAddress(newPos);
 
         if (_deviceLocation != null) {
           PolylineResult polylineResult = await setPolyline(newPos);
-          calculateDistanceCost(polylineResult.points);
+          calculateDistance(polylineResult.points);
+          calculateCost();
         }
 
         notifyListeners();
@@ -238,19 +240,13 @@ class MapProvider with ChangeNotifier {
     _markers!.add(_destinationMarker!);
   }
 
-  Future<PolylineResult> setPolyline(
-    LatLng destinationPoint, {
-    bool shouldUpdate = false,
-  }) async {
+  Future<PolylineResult> setPolyline(LatLng remotePoint) async {
     _polylines!.clear();
 
     PolylineResult result = await PolylinePoints().getRouteBetweenCoordinates(
       googleMapApi,
+      PointLatLng(remotePoint.latitude, remotePoint.longitude),
       PointLatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
-      PointLatLng(
-        destinationPoint.latitude,
-        destinationPoint.longitude,
-      ),
     );
 
     if (kDebugMode) {
@@ -276,21 +272,21 @@ class MapProvider with ChangeNotifier {
     return result;
   }
 
-  Future<void> setDestinationAddress(LatLng pos) async {
-    _destinationLocation = pos;
+  Future<void> setRemoteAddress(LatLng pos) async {
+    _remoteLocation = pos;
 
     List<Placemark> places = await placemarkFromCoordinates(
       pos.latitude,
       pos.longitude,
     );
-    _destinationAddress = places[2].name;
+    _remoteAddress = places[2].name;
 
     if (kDebugMode) {
       print(places[2].toString());
     }
   }
 
-  void calculateDistanceCost(List<PointLatLng> points) {
+  void calculateDistance(List<PointLatLng> points) {
     double distance = 0;
 
     for (int i = 0; i < points.length - 1; i++) {
@@ -303,10 +299,13 @@ class MapProvider with ChangeNotifier {
     }
 
     _distance = distance / 1000;
+  }
+
+  void calculateCost() {
     _cost = _distance! * 0.75;
   }
 
-  void clearRoutes() {
+  void clearRoutes([bool shouldClearDistanceCost = true]) {
     if (kDebugMode) {
       print(
         '======== Clear routes (markers, polylines, destination data, etc....) ========',
@@ -316,14 +315,16 @@ class MapProvider with ChangeNotifier {
     _markers!.clear();
     _polylines!.clear();
     _destinationMarker = null;
-    _distance = null;
-    _cost = null;
-    clearDestinationAddress();
+    if (shouldClearDistanceCost) {
+      _distance = null;
+      _cost = null;
+    }
+    clearRemoteAddress();
   }
 
-  void clearDestinationAddress() {
-    _destinationAddress = null;
-    _destinationLocation = null;
+  void clearRemoteAddress() {
+    _remoteAddress = null;
+    _remoteLocation = null;
   }
 
   void resetMapAction() {
@@ -340,10 +341,27 @@ class MapProvider with ChangeNotifier {
 
   void startListeningToDriver() {
     _driverStream = _dbService.getDriver$(ongoingTrip!.driverId!).listen(
-      (User driver) {
+      (User driver) async {
         if (kDebugMode) {
           print(driver.toMap());
         }
+
+        clearRoutes(false);
+        addMarker(
+          LatLng(driver.userLatitude!, driver.userLongitude!),
+          isDraggable: false,
+        );
+        notifyListeners();
+
+        PolylineResult polylineResult = await setPolyline(
+          LatLng(
+            driver.userLatitude!,
+            driver.userLongitude!,
+          ),
+        );
+        calculateDistance(polylineResult.points);
+
+        notifyListeners();
       },
     );
   }
@@ -352,6 +370,7 @@ class MapProvider with ChangeNotifier {
     changeMapAction(MapAction.driverArriving);
     stopAutoCancelTimer();
     startListeningToDriver();
+    _distance = null;
 
     notifyListeners();
   }

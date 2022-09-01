@@ -21,17 +21,20 @@ class DriverArriving extends StatelessWidget {
             color: Colors.white,
           ),
           padding: const EdgeInsets.all(15),
-          child: Column(
-            children: const [
-              Center(
-                child: Text(
-                  'Driver Arriving',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Driver Arriving',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
+              if (mapProvider!.distance != null)
+                Text(
+                  'Distance: ${mapProvider!.distance!.toStringAsFixed(2)} Km',
+                )
             ],
           ),
         ),
