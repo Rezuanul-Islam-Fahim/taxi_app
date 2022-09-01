@@ -358,24 +358,26 @@ class MapProvider with ChangeNotifier {
           print(driver.toMap());
         }
 
-        clearRoutes(false);
-        addMarker(
-          LatLng(driver.userLatitude!, driver.userLongitude!),
-          _carPin!,
-          isDraggable: false,
-          heading: driver.heading,
-        );
-        notifyListeners();
+        if (driver.userLatitude != null && driver.userLongitude != null) {
+          clearRoutes(false);
+          addMarker(
+            LatLng(driver.userLatitude!, driver.userLongitude!),
+            _carPin!,
+            isDraggable: false,
+            heading: driver.heading,
+          );
+          notifyListeners();
 
-        PolylineResult polylineResult = await setPolyline(
-          LatLng(
-            driver.userLatitude!,
-            driver.userLongitude!,
-          ),
-        );
-        calculateDistance(polylineResult.points);
+          PolylineResult polylineResult = await setPolyline(
+            LatLng(
+              driver.userLatitude!,
+              driver.userLongitude!,
+            ),
+          );
+          calculateDistance(polylineResult.points);
 
-        notifyListeners();
+          notifyListeners();
+        }
       },
     );
   }
