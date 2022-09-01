@@ -5,6 +5,7 @@ class User {
   final String? userType;
   final double? userLatitude;
   final double? userLongitude;
+  final double? heading;
 
   const User({
     this.id,
@@ -13,6 +14,7 @@ class User {
     this.userType = 'user',
     this.userLatitude,
     this.userLongitude,
+    this.heading,
   });
 
   factory User.fromJson(Map<String, dynamic> data) {
@@ -23,6 +25,7 @@ class User {
       userType: data['userType'],
       userLatitude: data['userLatitude'],
       userLongitude: data['userLongitude'],
+      heading: data['heading'],
     );
   }
 
@@ -41,6 +44,7 @@ class User {
     addNonNull('userType', userType);
     addNonNull('userLatitude', userLatitude);
     addNonNull('userLongitude', userLongitude);
+    addNonNull('heading', heading);
 
     return data;
   }

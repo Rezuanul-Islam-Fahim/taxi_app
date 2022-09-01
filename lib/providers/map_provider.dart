@@ -185,6 +185,7 @@ class MapProvider with ChangeNotifier {
     LatLng latLng,
     BitmapDescriptor pin, {
     bool isDraggable = true,
+    double? heading,
   }) {
     final String markerId = const Uuid().v4();
     final Marker newMarker = Marker(
@@ -210,6 +211,7 @@ class MapProvider with ChangeNotifier {
         }
         await updateMarkerPos(newPos);
       },
+      rotation: heading ?? 0.0,
       icon: pin,
       zIndex: 3,
     );
@@ -361,6 +363,7 @@ class MapProvider with ChangeNotifier {
           LatLng(driver.userLatitude!, driver.userLongitude!),
           _carPin!,
           isDraggable: false,
+          heading: driver.heading,
         );
         notifyListeners();
 
