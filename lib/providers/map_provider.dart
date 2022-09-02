@@ -404,7 +404,7 @@ class MapProvider with ChangeNotifier {
                 _deviceLocation!.longitude,
               ),
               secondPoint: LatLng(driver.userLatitude!, driver.userLongitude!),
-              padding: 80,
+              padding: 120,
             );
             _driverArrivingInit = true;
           }
@@ -456,7 +456,7 @@ class MapProvider with ChangeNotifier {
 
     animateCameraToPos(
       LatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
-      16,
+      17,
     );
   }
 
@@ -500,7 +500,7 @@ class MapProvider with ChangeNotifier {
         _ongoingTrip!.destinationLatitude!,
         _ongoingTrip!.destinationLongitude!,
       ),
-      padding: 100,
+      padding: 150,
     );
   }
 
@@ -511,7 +511,7 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
     animateCameraToPos(
       LatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
-      16,
+      17,
     );
   }
 
