@@ -453,6 +453,11 @@ class MapProvider with ChangeNotifier {
     _distance = null;
 
     notifyListeners();
+
+    animateCameraToPos(
+      LatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
+      16,
+    );
   }
 
   Future<void> triggerTripStarted() async {
@@ -625,5 +630,9 @@ class MapProvider with ChangeNotifier {
         padding!,
       ),
     );
+  }
+
+  void animateCameraToPos(LatLng pos, [double zoom = 15]) {
+    _controller!.animateCamera(CameraUpdate.newLatLngZoom(pos, zoom));
   }
 }
