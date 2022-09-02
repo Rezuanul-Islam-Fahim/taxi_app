@@ -20,7 +20,7 @@ class MapProvider with ChangeNotifier {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final LocationService _locationService = LocationService();
   final DatabaseService _dbService = DatabaseService();
-  bool driverArrivingInit = false;
+  bool _driverArrivingInit = false;
   late GoogleMapController? _controller;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
@@ -397,7 +397,7 @@ class MapProvider with ChangeNotifier {
         }
 
         if (driver.userLatitude != null && driver.userLongitude != null) {
-          if (mapAction == MapAction.driverArriving && !driverArrivingInit) {
+          if (mapAction == MapAction.driverArriving && !_driverArrivingInit) {
             animateCameraToBounds(
               firstPoint: LatLng(
                 _deviceLocation!.latitude,
@@ -406,7 +406,7 @@ class MapProvider with ChangeNotifier {
               secondPoint: LatLng(driver.userLatitude!, driver.userLongitude!),
               padding: 40,
             );
-            driverArrivingInit = !driverArrivingInit;
+            _driverArrivingInit = true;
           }
 
           clearRoutes(false);
@@ -586,6 +586,7 @@ class MapProvider with ChangeNotifier {
     resetMapAction();
     clearRoutes();
     _ongoingTrip = null;
+    _driverArrivingInit = false;
     stopListeningToTrip();
     stopAutoCancelTimer();
 
