@@ -37,6 +37,7 @@ class MapProvider with ChangeNotifier {
   late Timer? _tripCancelTimer;
   late StreamSubscription<Trip>? _tripStream;
   late StreamSubscription<User>? _driverStream;
+  late StreamSubscription<Position>? _positionStream;
 
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
@@ -56,6 +57,7 @@ class MapProvider with ChangeNotifier {
   Timer? get tripCancelTimer => _tripCancelTimer;
   StreamSubscription<Trip>? get tripStream => _tripStream;
   StreamSubscription<User>? get driverStream => _driverStream;
+  StreamSubscription<Position>? get positionStream => _positionStream;
 
   MapProvider() {
     _mapAction = MapAction.selectTrip;
@@ -72,6 +74,7 @@ class MapProvider with ChangeNotifier {
     _tripCancelTimer = null;
     _tripStream = null;
     _driverStream = null;
+    _positionStream = null;
     setCustomPin();
 
     if (kDebugMode) {
@@ -122,6 +125,7 @@ class MapProvider with ChangeNotifier {
       cameraLatLng = const LatLng(37.42227936982647, -122.08611108362673);
     }
 
+    listenToPositionStream();
     setCameraPosition(cameraLatLng);
 
     notifyListeners();
@@ -179,6 +183,31 @@ class MapProvider with ChangeNotifier {
         notifyListeners();
       });
     }
+  }
+
+  void listenToPositionStream() {
+    _positionStream = LocationService().getRealtimeDeviceLocation().listen(
+      (Position pos) {
+        if (kDebugMode) {
+          print(pos.toString());
+        }
+
+        setDeviceLocation(pos);
+        setDeviceLocationAddress(
+          pos.latitude,
+          pos.longitude,
+        );
+
+        if ((mapAction == MapAction.tripSelected ||
+                mapAction == MapAction.searchDriver) &&
+            _remoteLocation != null) {
+          updateRoutes(_remoteLocation!);
+        } else if (mapAction == MapAction.tripStarted &&
+            _remoteLocation != null) {
+          updateRoutes(_remoteLocation!);
+        }
+      },
+    );
   }
 
   void addMarker(
@@ -282,6 +311,12 @@ class MapProvider with ChangeNotifier {
     }
 
     return result;
+  }
+
+  Future<void> updateRoutes(LatLng remotePoint) async {
+    PolylineResult result = await setPolyline(remotePoint);
+    calculateDistance(result.points);
+    notifyListeners();
   }
 
   Future<void> setRemoteAddress(LatLng pos) async {

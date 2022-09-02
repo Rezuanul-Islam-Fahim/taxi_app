@@ -20,4 +20,12 @@ class LocationService {
       desiredAccuracy: LocationAccuracy.best,
     );
   }
+
+  Stream<Position> getRealtimeDeviceLocation() {
+    return Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    );
+  }
 }
