@@ -204,9 +204,7 @@ class MapProvider with ChangeNotifier {
         if ((mapAction == MapAction.tripSelected ||
                 mapAction == MapAction.searchDriver ||
                 mapAction == MapAction.tripStarted) &&
-            _remoteLocation != null) {
-          updateRoutes(_remoteLocation!);
-        }
+            _remoteLocation != null) updateRoutes();
       },
     );
   }
@@ -314,9 +312,9 @@ class MapProvider with ChangeNotifier {
     return result;
   }
 
-  Future<void> updateRoutes(LatLng remotePoint) async {
-    if (_markers!.isNotEmpty) {
-      PolylineResult result = await setPolyline(remotePoint);
+  Future<void> updateRoutes() async {
+    PolylineResult result = await setPolyline(_remoteLocation!);
+    if (_remoteLocation != null) {
       calculateDistance(result.points);
       notifyListeners();
     }
