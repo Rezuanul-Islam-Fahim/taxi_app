@@ -20,6 +20,7 @@ class MapProvider with ChangeNotifier {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final LocationService _locationService = LocationService();
   final DatabaseService _dbService = DatabaseService();
+  bool driverArrivingInit = false;
   late GoogleMapController? _controller;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
@@ -396,6 +397,18 @@ class MapProvider with ChangeNotifier {
         }
 
         if (driver.userLatitude != null && driver.userLongitude != null) {
+          if (mapAction == MapAction.driverArriving && !driverArrivingInit) {
+            animateCameraToBounds(
+              firstPoint: LatLng(
+                _deviceLocation!.latitude,
+                _deviceLocation!.longitude,
+              ),
+              secondPoint: LatLng(driver.userLatitude!, driver.userLongitude!),
+              padding: 40,
+            );
+            driverArrivingInit = !driverArrivingInit;
+          }
+
           clearRoutes(false);
           addMarker(
             LatLng(driver.userLatitude!, driver.userLongitude!),
@@ -577,5 +590,39 @@ class MapProvider with ChangeNotifier {
     stopAutoCancelTimer();
 
     notifyListeners();
+  }
+
+  LatLng getNorthEastLatLng(LatLng firstPoint, LatLng lastPoint) => LatLng(
+        firstPoint.latitude >= lastPoint.latitude
+            ? firstPoint.latitude
+            : lastPoint.latitude,
+        firstPoint.longitude >= lastPoint.longitude
+            ? firstPoint.longitude
+            : lastPoint.longitude,
+      );
+
+  LatLng getSouthWestLatLng(LatLng firstPoint, LatLng lastPoint) => LatLng(
+        firstPoint.latitude <= lastPoint.latitude
+            ? firstPoint.latitude
+            : lastPoint.latitude,
+        firstPoint.longitude <= lastPoint.longitude
+            ? firstPoint.longitude
+            : lastPoint.longitude,
+      );
+
+  void animateCameraToBounds({
+    LatLng? firstPoint,
+    LatLng? secondPoint,
+    double? padding,
+  }) {
+    _controller!.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          northeast: getNorthEastLatLng(firstPoint!, secondPoint!),
+          southwest: getSouthWestLatLng(firstPoint, secondPoint),
+        ),
+        padding!,
+      ),
+    );
   }
 }
