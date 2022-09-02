@@ -17,6 +17,7 @@ import '../services/database_service.dart';
 import '../services/location_service.dart';
 
 class MapProvider with ChangeNotifier {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final LocationService _locationService = LocationService();
   final DatabaseService _dbService = DatabaseService();
   late GoogleMapController? _controller;
@@ -39,6 +40,7 @@ class MapProvider with ChangeNotifier {
   late StreamSubscription<User>? _driverStream;
   late StreamSubscription<Position>? _positionStream;
 
+  GlobalKey<ScaffoldState>? get scaffoldKey => _scaffoldKey;
   CameraPosition? get cameraPos => _cameraPos;
   GoogleMapController? get controller => _controller;
   Set<Marker>? get markers => _markers;
@@ -479,6 +481,16 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void triggerTripCompleted() {
+    resetMapAction();
+    cancelTrip();
+    ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+      const SnackBar(content: Text('Trip Completed')),
+    );
+
+    notifyListeners();
+  }
+
   void startListeningToTrip() {
     if (kDebugMode) {
       print('======== Start litening to trip stream ========');
@@ -492,7 +504,9 @@ class MapProvider with ChangeNotifier {
       }
       setOngoingTrip(trip);
 
-      if (trip.reachedDestination != null && trip.reachedDestination!) {
+      if (trip.tripCompleted != null && trip.tripCompleted!) {
+        triggerTripCompleted();
+      } else if (trip.reachedDestination != null && trip.reachedDestination!) {
         triggerReachedDestination();
       } else if (trip.started != null && trip.started!) {
         triggerTripStarted();

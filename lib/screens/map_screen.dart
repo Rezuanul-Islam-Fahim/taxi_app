@@ -19,10 +19,11 @@ class MapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Provider.of<MapProvider>(context, listen: false).initializeMap();
 
-    return Scaffold(
-      body: Consumer<MapProvider>(
-        builder: (BuildContext context, MapProvider mapProvider, _) {
-          return SafeArea(
+    return Consumer<MapProvider>(
+      builder: (BuildContext context, MapProvider mapProvider, _) {
+        return Scaffold(
+          key: mapProvider.scaffoldKey,
+          body: SafeArea(
             child: Stack(
               children: [
                 mapProvider.cameraPos != null
@@ -48,9 +49,9 @@ class MapScreen extends StatelessWidget {
                 ReachedDestination(mapProvider: mapProvider),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
