@@ -6,6 +6,7 @@ import 'package:taxi_app/providers/map_provider.dart';
 import '../widgets/map_screen_widgets/confirm_pickup.dart';
 import '../widgets/map_screen_widgets/driver_arrived.dart';
 import '../widgets/map_screen_widgets/driver_arriving.dart';
+import '../widgets/map_screen_widgets/reached_destination.dart';
 import '../widgets/map_screen_widgets/search_driver.dart';
 import '../widgets/map_screen_widgets/trip_started.dart';
 
@@ -44,6 +45,7 @@ class MapScreen extends StatelessWidget {
                 DriverArriving(mapProvider: mapProvider),
                 DriverArrived(mapProvider: mapProvider),
                 TripStarted(mapProvider: mapProvider),
+                ReachedDestination(mapProvider: mapProvider),
               ],
             ),
           );

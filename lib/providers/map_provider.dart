@@ -472,6 +472,13 @@ class MapProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void triggerReachedDestination() {
+    changeMapAction(MapAction.reachedDestination);
+    clearRoutes(false);
+
+    notifyListeners();
+  }
+
   void startListeningToTrip() {
     if (kDebugMode) {
       print('======== Start litening to trip stream ========');
@@ -485,7 +492,9 @@ class MapProvider with ChangeNotifier {
       }
       setOngoingTrip(trip);
 
-      if (trip.started != null && trip.started!) {
+      if (trip.reachedDestination != null && trip.reachedDestination!) {
+        triggerReachedDestination();
+      } else if (trip.started != null && trip.started!) {
         triggerTripStarted();
       } else if (trip.arrived != null && trip.arrived!) {
         triggerDriverArrived();

@@ -5,4 +5,5 @@ enum MapAction {
   driverArriving,
   driverArrived,
   tripStarted,
+  reachedDestination,
 }
