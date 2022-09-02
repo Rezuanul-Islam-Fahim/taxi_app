@@ -509,6 +509,10 @@ class MapProvider with ChangeNotifier {
     clearRoutes(false);
 
     notifyListeners();
+    animateCameraToPos(
+      LatLng(_deviceLocation!.latitude, _deviceLocation!.longitude),
+      16,
+    );
   }
 
   void triggerTripCompleted() {
