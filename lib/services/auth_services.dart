@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:taxi_app/services/database_service.dart';
 
 import '../models/user_model.dart' as user;
+import '../providers/user_provider.dart';
 
 class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -34,6 +35,7 @@ class AuthServices {
     String? username,
     String? email,
     String? password,
+    UserProvider? userProvider,
   }) async {
     if (kDebugMode) {
       print(username);
@@ -51,6 +53,13 @@ class AuthServices {
           id: userData.user!.uid,
           username: username,
           email: email,
+        ),
+      );
+      userProvider!.setUser(
+        user.User(
+          id: userData.user!.uid,
+          email: email,
+          username: username,
         ),
       );
 
