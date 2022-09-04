@@ -139,6 +139,11 @@ class MapProvider with ChangeNotifier {
             deviceLocation.latitude,
             deviceLocation.longitude,
           );
+
+          if (_positionStream != null) {
+            _positionStream!.cancel();
+            _positionStream = null;
+          }
           listenToPositionStream();
         } catch (error) {
           if (kDebugMode) {
