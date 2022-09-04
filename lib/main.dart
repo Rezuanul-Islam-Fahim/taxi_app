@@ -7,6 +7,7 @@ import 'screens/map_screen.dart';
 import 'screens/login_signup_screen.dart';
 
 import 'screens/onboarding_screen.dart';
+import 'screens/trips_screen.dart';
 import 'theme.dart';
 
 Future<void> main() async {
@@ -31,6 +32,7 @@ class TaxiApp extends StatelessWidget {
           OnboardingScreen.route: (_) => const OnboardingScreen(),
           MapScreen.route: (_) => const MapScreen(),
           LoginSignupScreen.route: (_) => const LoginSignupScreen(),
+          TripsScreen.route: (_) => const TripsScreen(),
         },
       ),
     );

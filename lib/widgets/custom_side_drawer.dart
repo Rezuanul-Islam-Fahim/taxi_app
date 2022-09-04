@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/login_signup_screen.dart';
+import '../screens/trips_screen.dart';
 
 class CustomSideDrawer extends StatelessWidget {
   const CustomSideDrawer({Key? key}) : super(key: key);
@@ -49,7 +50,7 @@ class CustomSideDrawer extends StatelessWidget {
             context: context,
             title: 'Trips',
             icon: Icons.navigation_rounded,
-            onTap: () {},
+            onTap: () => Navigator.of(context).pushNamed(TripsScreen.route),
           ),
           _buildButtonTile(
             context: context,
