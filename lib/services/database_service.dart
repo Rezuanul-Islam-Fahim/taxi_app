@@ -10,6 +10,12 @@ class DatabaseService {
     await _firestore.collection('users').doc(user.id).set(user.toMap());
   }
 
+  Future<user.User> getUser(String id) async {
+    return user.User.fromJson(
+      (await _firestore.collection('users').doc(id).get()).data()!,
+    );
+  }
+
   Stream<user.User> getDriver$(String driverId) {
     return _firestore.collection('drivers').doc(driverId).snapshots().map(
           (DocumentSnapshot snapshot) => user.User.fromJson(

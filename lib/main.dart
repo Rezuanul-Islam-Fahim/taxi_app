@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/map_provider.dart';
+import 'providers/user_provider.dart';
 import 'screens/map_screen.dart';
 import 'screens/login_signup_screen.dart';
 
@@ -21,8 +22,11 @@ class TaxiApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: MapProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: UserProvider.initialize()),
+        ChangeNotifierProvider.value(value: MapProvider())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Taxi App',
