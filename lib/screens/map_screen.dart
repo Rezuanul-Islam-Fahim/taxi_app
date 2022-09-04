@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:taxi_app/providers/map_provider.dart';
 
+import '../widgets/custom_side_drawer.dart';
 import '../widgets/map_screen_widgets/confirm_pickup.dart';
 import '../widgets/map_screen_widgets/driver_arrived.dart';
 import '../widgets/map_screen_widgets/driver_arriving.dart';
@@ -24,6 +25,7 @@ class MapScreen extends StatelessWidget {
       builder: (BuildContext context, MapProvider mapProvider, _) {
         return Scaffold(
           key: mapProvider.scaffoldKey,
+          drawer: const CustomSideDrawer(),
           body: SafeArea(
             child: Stack(
               children: [
