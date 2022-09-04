@@ -19,12 +19,15 @@ class MapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<MapProvider>(context, listen: false).initializeMap();
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    Provider.of<MapProvider>(context, listen: false).initializeMap(
+      scaffoldKey: scaffoldKey,
+    );
 
     return Consumer<MapProvider>(
       builder: (BuildContext context, MapProvider mapProvider, _) {
         return Scaffold(
-          key: mapProvider.scaffoldKey,
+          key: scaffoldKey,
           drawer: const CustomSideDrawer(),
           body: SafeArea(
             child: Stack(

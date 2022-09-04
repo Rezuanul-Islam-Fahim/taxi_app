@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/login_signup_screen.dart';
+import '../screens/map_screen.dart';
 import '../screens/trips_screen.dart';
 
 class CustomSideDrawer extends StatelessWidget {
@@ -46,6 +47,14 @@ class CustomSideDrawer extends StatelessWidget {
           //     ),
           //   ),
           const SizedBox(height: 10),
+          _buildButtonTile(
+            context: context,
+            title: 'Home',
+            icon: Icons.home_rounded,
+            onTap: () => Navigator.of(context).pushReplacementNamed(
+              MapScreen.route,
+            ),
+          ),
           _buildButtonTile(
             context: context,
             title: 'Trips',

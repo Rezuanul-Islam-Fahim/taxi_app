@@ -17,9 +17,9 @@ import '../services/database_service.dart';
 import '../services/location_service.dart';
 
 class MapProvider with ChangeNotifier {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final LocationService _locationService = LocationService();
   final DatabaseService _dbService = DatabaseService();
+  late GlobalKey<ScaffoldState>? _scaffoldKey;
   late GoogleMapController? _controller;
   late Set<Marker>? _markers;
   late MapAction? _mapAction;
@@ -63,6 +63,7 @@ class MapProvider with ChangeNotifier {
   StreamSubscription<Position>? get positionStream => _positionStream;
 
   MapProvider() {
+    _scaffoldKey = null;
     _mapAction = MapAction.selectTrip;
     _deviceLocation = null;
     _remoteLocation = null;
@@ -87,6 +88,10 @@ class MapProvider with ChangeNotifier {
     }
   }
 
+  void setScaffoldKey(GlobalKey<ScaffoldState> scaffoldKey) {
+    _scaffoldKey = scaffoldKey;
+  }
+
   Future<void> setCustomPin() async {
     _selectionPin = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(devicePixelRatio: 2.5),
@@ -98,13 +103,15 @@ class MapProvider with ChangeNotifier {
     );
   }
 
-  Future<void> initializeMap() async {
+  Future<void> initializeMap({GlobalKey<ScaffoldState>? scaffoldKey}) async {
     Position? deviceLocation;
     LatLng? cameraLatLng;
 
+    setScaffoldKey(scaffoldKey!);
+
     if (await _locationService.checkLocationIfPermanentlyDisabled()) {
       showDialog(
-        context: _scaffoldKey.currentContext!,
+        context: _scaffoldKey!.currentContext!,
         builder: (BuildContext context) {
           return AlertDialog(
             content: const Text(
@@ -534,7 +541,7 @@ class MapProvider with ChangeNotifier {
   void triggerTripCompleted() {
     resetMapAction();
     cancelTrip();
-    ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+    ScaffoldMessenger.of(_scaffoldKey!.currentContext!).showSnackBar(
       const SnackBar(content: Text('Trip Completed')),
     );
 
