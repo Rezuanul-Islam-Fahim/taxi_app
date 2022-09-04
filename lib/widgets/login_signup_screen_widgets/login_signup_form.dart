@@ -50,6 +50,7 @@ class _LoginFormState extends State<LoginForm>
       isAuthenticated = await _auth.login(
         email: _email,
         password: _password,
+        userProvider: userProvider,
       );
     } else {
       isAuthenticated = await _auth.createAccount(

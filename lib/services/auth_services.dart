@@ -9,17 +9,26 @@ class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseService _db = DatabaseService();
 
-  Future<bool> login({String? email, String? password}) async {
+  Future<bool> login({
+    String? email,
+    String? password,
+    UserProvider? userProvider,
+  }) async {
     if (kDebugMode) {
       print(email);
       print(password);
     }
 
     try {
-      await _auth.signInWithEmailAndPassword(
+      UserCredential userCred = await _auth.signInWithEmailAndPassword(
         email: email!,
         password: password!,
       );
+
+      if (userCred.user != null) {
+        user.User loggedUser = await _db.getUser(userCred.user!.uid);
+        userProvider!.setUser(loggedUser);
+      }
 
       return true;
     } catch (e) {
