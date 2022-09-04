@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user_model.dart' as user;
+import '../providers/map_provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/login_signup_screen.dart';
 import '../screens/map_screen.dart';
@@ -13,6 +14,10 @@ class CustomSideDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MapProvider mapProvider = Provider.of<MapProvider>(
+      context,
+      listen: false,
+    );
     final UserProvider userProvider = Provider.of<UserProvider>(
       context,
       listen: false,
@@ -67,6 +72,7 @@ class CustomSideDrawer extends StatelessWidget {
             title: 'Logout',
             icon: Icons.exit_to_app,
             onTap: () {
+              mapProvider.stopListenToPositionStream();
               userProvider.clearUser();
               Navigator.of(context).pushReplacementNamed(
                 LoginSignupScreen.route,

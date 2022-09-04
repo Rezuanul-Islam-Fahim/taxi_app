@@ -234,6 +234,11 @@ class MapProvider with ChangeNotifier {
     );
   }
 
+  void stopListenToPositionStream() {
+    _positionStream!.cancel();
+    _positionStream = null;
+  }
+
   void addMarker(
     LatLng latLng,
     BitmapDescriptor pin, {
