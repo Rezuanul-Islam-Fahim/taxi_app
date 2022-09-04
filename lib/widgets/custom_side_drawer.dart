@@ -74,8 +74,9 @@ class CustomSideDrawer extends StatelessWidget {
             onTap: () {
               mapProvider.stopListenToPositionStream();
               userProvider.clearUser();
-              Navigator.of(context).pushReplacementNamed(
+              Navigator.of(context).pushNamedAndRemoveUntil(
                 LoginSignupScreen.route,
+                (Route<dynamic> route) => false,
               );
               FirebaseAuth.instance.signOut();
             },
