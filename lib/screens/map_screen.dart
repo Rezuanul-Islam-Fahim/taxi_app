@@ -53,7 +53,7 @@ class MapScreen extends StatelessWidget {
                 DriverArrived(mapProvider: mapProvider),
                 TripStarted(mapProvider: mapProvider),
                 ReachedDestination(mapProvider: mapProvider),
-                const FloatingDrawerBarButton(),
+                FloatingDrawerBarButton(scaffoldKey: scaffoldKey),
               ],
             ),
           ),
