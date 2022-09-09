@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:459013782247:android:f934130b39b071a75f0042",
+        "mobilesdk_app_id": "1:459013782247:android:81bf6fad945aa9bc5f0042",
         "android_client_info": {
-          "package_name": "com.example.taxi_app"
+          "package_name": "com.rezuanulfahim.taxi_app"
         }
       },
       "oauth_client": [
