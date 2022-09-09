@@ -99,7 +99,7 @@ class ConfirmPickup extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.black,
+                    backgroundColor: Colors.black,
                     padding: const EdgeInsets.all(15),
                   ),
                   onPressed: () => _startTrip(context),
@@ -111,7 +111,7 @@ class ConfirmPickup extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[300],
+                    backgroundColor: Colors.grey[300],
                     padding: const EdgeInsets.all(15),
                   ),
                   onPressed: () => mapProvider!.cancelTrip(),

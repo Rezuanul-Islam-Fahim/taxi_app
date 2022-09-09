@@ -55,7 +55,7 @@ class SearchDriver extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.grey[300],
+                    backgroundColor: Colors.grey[300],
                     padding: const EdgeInsets.all(15),
                   ),
                   onPressed: _cancelTrip,

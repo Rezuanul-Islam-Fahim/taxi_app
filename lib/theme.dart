@@ -24,7 +24,7 @@ ThemeData get theme {
         ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        primary: Colors.deepPurple,
+        backgroundColor: Colors.deepPurple,
         elevation: 0,
         enableFeedback: true,
         shadowColor: Colors.transparent,
