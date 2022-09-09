@@ -8,12 +8,12 @@ class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> storeUser(user.User user) async {
-    await _firestore.collection('users').doc(user.id).set(user.toMap());
+    await _firestore.collection('passengers').doc(user.id).set(user.toMap());
   }
 
   Future<user.User> getUser(String id) async {
     return user.User.fromJson(
-      (await _firestore.collection('users').doc(id).get()).data()!,
+      (await _firestore.collection('passengers').doc(id).get()).data()!,
     );
   }
 
