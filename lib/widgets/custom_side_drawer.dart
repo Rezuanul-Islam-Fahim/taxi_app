@@ -29,6 +29,9 @@ class CustomSideDrawer extends StatelessWidget {
         children: [
           loggedUser != null
               ? UserAccountsDrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                  ),
                   currentAccountPicture: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[50],
