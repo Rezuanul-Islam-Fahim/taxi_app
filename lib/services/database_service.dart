@@ -9,6 +9,9 @@ class DatabaseService {
 
   Future<void> storeUser(user.User user) async {
     await _firestore.collection('passengers').doc(user.id).set(user.toMap());
+    _firestore.collection('registeredUsers').doc('passengers').set({
+      'registeredEmails': FieldValue.arrayUnion([user.email]),
+    });
   }
 
   Future<user.User> getUser(String id) async {

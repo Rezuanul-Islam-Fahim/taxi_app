@@ -11,7 +11,7 @@ class User {
     this.id,
     this.username,
     this.email,
-    this.userType = 'user',
+    this.userType = 'passenger',
     this.userLatitude,
     this.userLongitude,
     this.heading,
