@@ -20,14 +20,22 @@ class AuthServices {
     }
 
     try {
-      UserCredential userCred = await _auth.signInWithEmailAndPassword(
-        email: email!,
-        password: password!,
-      );
+      if (!await _db.checkIsDriver(email!)) {
+        UserCredential userCred = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password!,
+        );
 
-      if (userCred.user != null) {
-        user.User loggedUser = await _db.getUser(userCred.user!.uid);
-        userProvider!.setUser(loggedUser);
+        if (userCred.user != null) {
+          user.User loggedUser = await _db.getUser(userCred.user!.uid);
+          userProvider!.setUser(loggedUser);
+        }
+      } else {
+        if (kDebugMode) {
+          print('This is a driver account. Don\'t have permission to login');
+        }
+
+        return false;
       }
 
       return true;

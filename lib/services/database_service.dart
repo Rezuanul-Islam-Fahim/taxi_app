@@ -1,11 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/trip_model.dart';
 import '../models/user_model.dart' as user;
 
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<bool> checkIsDriver(String email) async {
+    Map<String, dynamic> data =
+        (await _firestore.collection('registeredUsers').doc('drivers').get())
+            .data()!;
+
+    if (kDebugMode) {
+      print(data);
+    }
+
+    if (data['registeredEmails'] == null) {
+      return false;
+    } else if ((data['registeredEmails'] as List).contains(email)) {
+      return true;
+    }
+
+    return false;
+  }
 
   Future<void> storeUser(user.User user) async {
     await _firestore.collection('passengers').doc(user.id).set(user.toMap());
