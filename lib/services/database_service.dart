@@ -8,7 +8,7 @@ import '../models/user_model.dart' as user;
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<bool> checkIsDriver(String email) async {
+  Future<bool> checkIfDriver(String email) async {
     Map<String, dynamic> data =
         (await _firestore.collection('registeredUsers').doc('drivers').get())
             .data()!;

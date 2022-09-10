@@ -20,7 +20,7 @@ class AuthServices {
     }
 
     try {
-      if (!await _db.checkIsDriver(email!)) {
+      if (!await _db.checkIfDriver(email!)) {
         UserCredential userCred = await _auth.signInWithEmailAndPassword(
           email: email,
           password: password!,
